@@ -1,0 +1,264 @@
+﻿@*<h2>NegotiationsAndDevelopment</h2>*@
+@using System.Diagnostics
+@using System.Web.Mvc.Html
+@model ProjectManagement.ViewModels.Commercial.VmCommercialNewIncentivePolicy
+<style>
+    .page-header-fixed .page-container {
+        margin-top: 0px;
+    }
+
+    .navbar-fixed-top {
+        position: relative;
+    }
+
+    .DTFC_LeftBodyWrapper {
+        position: relative;
+        top: -11px !important;
+        left: 0px;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .DTFC_LeftBodyLiner {
+        position: relative;
+        top: 0px;
+        left: 0px;
+        overflow: hidden;
+        height: 200px;
+        max-height: 200px;
+    }
+
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 70px;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 999;
+        text-align: center;
+    }
+</style>
+
+<div class="portlet box red-pink">
+    <div class="portlet-title">
+        <div class="caption">
+            Negotiations and Development
+        </div>
+    </div>
+    <div class="portlet-body form">
+        @using (Html.BeginForm("NegotiationsAndDevelopment", "Commercial", FormMethod.Post, new { id = "form1", enctype = "multipart/form-data" }))
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="col-lg-6">
+                                            <div class="col-lg-5" style="font-weight: bold">Category:</div>
+                                            <div class="col-lg-7">
+
+                                                @if (ViewBag.Categories != null)
+                                                {
+                                                    @Html.DropDownListFor(model => model.Cm_NegotiationsAndDevelopmentModel.Category, new SelectList(ViewBag.Categories, "Value", "Text"), new { @class = "Category form-control", @id = "Category",@onchange ="categoryChange(this.value)" })
+
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="col-lg-5" style="font-weight: bold">Effective Month:</div>
+                                            <div class="col-lg-7">
+                                                @Html.TextBoxFor(model => model.Cm_NegotiationsAndDevelopmentModel.EffectiveMonth, new { @class = "form-control", type = "text", @id = "EffectiveMonth", @placeholder = "YYYY-MM-DD", @readonly = "readonly" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="col-lg-6">
+                                            <div class="col-lg-5" style="font-weight: bold">Remarks:</div>
+                                            <div class="col-lg-7">
+                                                @Html.TextAreaFor(model => model.Cm_NegotiationsAndDevelopmentModel.Remarks, new { @class = "form-control", type = "text", @rows = 5, @id = "Remarks" })
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6" id="SavingAmountDiv" style="display: none">
+                                            <div class="col-lg-5" style="font-weight: bold">Total Saving Amount:</div>
+                                            <div class="col-lg-7">
+                                                @Html.TextBoxFor(model => model.Cm_NegotiationsAndDevelopmentModel.SavingAmount, new { @class = "form-control", type = "text", @id = "SavingAmount", @onkeypress = "return isNumberKey(event)" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br /><br />
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="col-lg-4">
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <input type="submit" id="btnSubmit" class="btn sbold uppercase btn-outline blue" value="Save" />
+                                        </div>
+                                        <div class="col-lg-4">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="loading" style="display: none;text-align: center;">
+                <img src="~/img/loading-spinner-grey.gif" />
+            </div>
+        }
+    </div>
+</div>
+<br />
+<br />
+<div class="portlet box red-pink">
+    <div class="portlet-title">
+        <div class="caption">
+            List
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <div class="table-scrollable table-responsive">
+            <table class="table table-striped table-bordered table-hover tbl" id="tbl">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Category</th>
+                        <th>Unit</th>
+                        <th>Effective <br />Month</th>
+                        <th>Effective <br />Year</th>
+                        <th>Remarks</th>
+                        <th>Saving Amount</th>
+                        <th>Amount</th>
+                        <th>Final Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Cm_NegotiationsAndDevelopmentModels.Any())
+                    {
+                        foreach (var item in Model.Cm_NegotiationsAndDevelopmentModels)
+                        {
+                            <tr>
+                                <td></td>
+                                <td>@item.Category</td>
+                                <td>@item.Unit</td>
+                                <td>@item.MonthNames</td>
+                                <td>@item.Years</td>
+                                <td>@item.Remarks</td>
+                                <td>@item.SavingAmount</td>
+                                <td>@item.Amount</td>
+                                <td>@item.FinalAmount</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("body:first").addClass("page-sidebar-closed");
+        $("ul.page-sidebar-menu").addClass("page-sidebar-menu-closed");
+    });
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+    function categoryChange(cats)
+    {
+        if (cats == "Vendor Development and contract establishment") {
+            $("#SavingAmountDiv").hide();
+        } else {
+            $("#SavingAmountDiv").show();
+        }
+    }
+    
+    $(document).ready(function ()
+    {
+       $("#btnSubmit").click(function (e) {
+            $("#loading").show();
+            var Category = $("#Category option:selected").text();
+
+            if (Category == "Select Category") {
+                $("#loading").hide();
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please must select Category.",
+                }).show();
+                $('#loading').hide();
+                return false;
+            }
+
+            var EffectiveMonth = $("#EffectiveMonth").val();
+
+            if (EffectiveMonth == "") {
+                $("#loading").hide();
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please must input Effective Month.",
+                }).show();
+                $('#loading').hide();
+                return false;
+            }
+            if (Category == "Vendor Development and contract establishment") {
+                $("#SavingAmountDiv").hide();
+            } else {
+                $("#SavingAmountDiv").show();
+                var SavingAmount = $("#SavingAmount").val();
+                if (SavingAmount == "") {
+                    $("#loading").hide();
+                    alertify.dialog('alert').set({
+                        'title': '   ',
+                        'transition': 'zoom',
+                        'message': "Please must input Saving Amount.",
+                    }).show();
+                    $('#loading').hide();
+                    return false;
+                }
+            }
+            $("#loading").hide();
+        });
+
+        $('#EffectiveMonth').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+        });
+
+        var t = $('#tbl').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "lengthMenu": [[10, 20, 30, 50, -1], [10, 20, 30, 50, "All"]],
+            "fixedHeader": {
+                header: true,
+                footer: true
+            }
+
+        });
+        t.on('order.dt search.dt', function () {
+            t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+    });
+</script>

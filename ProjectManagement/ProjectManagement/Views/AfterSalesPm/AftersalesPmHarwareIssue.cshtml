@@ -1,0 +1,928 @@
+﻿@using System.Web.Mvc.Html
+@using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical
+@using ProjectManagement.Infrastructures.Helper
+@using ProjectManagement.Models
+@model ProjectManagement.ViewModels.AftersalesPm.VmIssueVerification
+
+@*<h2>AftersalesPmHarwareIssue</h2>*@
+
+<script src="~/Scripts/moment.js"></script>
+<script src="~/Content/bootstrap-datetimepicker/bootstrap-datetimepicker.js"></script>
+<link href="~/Content/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+@*datatable *@
+<link href="~/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/layouts/layout4/css/layout.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/layouts/layout4/css/themes/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
+<link href="~/assets/layouts/layout4/css/custom.min.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/loadingText.css" rel="stylesheet" />
+<style>
+    .chosen-container-single .chosen-single {
+        width: 300px !important;
+        height: 50%;
+    }
+
+    .chosen-container chosen-container-single {
+        width: 300px !important;
+        height: 50%;
+    }
+
+    .chosen-results {
+        width: 300px !important;
+        height: 50%;
+    }
+
+    .chosen-search {
+        width: 300px !important;
+        height: 50%;
+    }
+
+    .chosen-drop {
+        width: 300px !important;
+    }
+
+    .DTFC_LeftBodyWrapper {
+        position: relative;
+        top: -11px !important;
+        left: 0px;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .DTFC_LeftBodyLiner {
+        position: relative;
+        top: 0px;
+        left: 0px;
+        overflow: hidden;
+        height: 200px;
+        max-height: 200px;
+    }
+
+    .page-header-fixed .page-container {
+        margin-top: 0px;
+    }
+
+    .navbar-fixed-top {
+        position: relative;
+    }
+
+    input[type=checkbox] {
+        /* Double-sized Checkboxes */
+        -ms-transform: scale(2); /* IE */
+        -moz-transform: scale(2); /* FF */
+        -webkit-transform: scale(2); /* Safari and Chrome */
+        -o-transform: scale(2); /* Opera */
+        padding: 10px;
+    }
+
+    .modal-fullscreen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    .modal-content {
+        height: 100%;
+        width: 100%;
+    }
+
+    .modal-body {
+        max-height: calc(100vh - 210px);
+        overflow-y: auto;
+        background: gray;
+    }
+
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 70px;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 999;
+        text-align: center;
+    }
+</style>
+<script>
+    $('#modal_button').click(function (e) {
+        $('.modal').addClass('active');
+        e.preventDefault();
+    });
+
+    $('.modal').click(function (e) {
+        $('.modal').removeClass('active');
+        e.preventDefault();
+    });
+</script>
+<div class="row">
+    <div class="col-lg-12">
+        <!-- BEGIN VALIDATION STATES-->
+        <div class="portlet light portlet-fit portlet-form bordered">
+            <div class="portlet-title" style="background: #435D7D">
+                <div class="caption">
+                    <i class="icon-settings font-white"></i>
+                    <span class="caption-subject font-white sbold uppercase">Aftersales PM Hardware Issue</span>
+                </div>
+                <div class="actions">
+                    @*<input type="submit" value="ADD" class="btn btn-circle green sbold uppercase" />*@
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="form-body">
+                    <div class="row" id="repeatOrders">
+                        <div class="col-lg-12">
+                            <div class="col-lg-6">
+
+                                <div class="col-lg-4">
+                                    <button type="submit" class="btn btn-circle green-dark sbold uppercase btn1" id="btn1"><i class="fa fa-plus"></i>Add Issue</button>
+                                </div>
+                                <div class="col-lg-4"></div>
+                                <div class="col-lg-4"></div>
+                            </div>
+                            <div class="col-lg-6"></div>
+
+                        </div>
+                    </div>
+                    <br /><br /><br />
+                </div>
+            </div>
+        </div>
+        <!-- END VALIDATION STATES-->
+    </div>
+</div>
+
+<div class="row" style="background: gray; padding: 15px;">
+    <div class="col-lg-12">
+        <!-- BEGIN VALIDATION STATES-->
+        <div class="portlet light portlet-fit portlet-form bordered">
+            <div class="portlet-body" style="padding: 15px;">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl1" id="tbl1">
+                        <thead style="background-color: #C00000; color: white;">
+                            <tr>
+                                <th>#</th>
+                                <th style="display: none">Id</th>
+                                <th class="text-center">Model Name</th>
+                                <th class="text-center">Supplier</th>
+                                <th class="text-center">Soft.Ver.No.</th>
+                                <th class="text-center">Soft.Ver.Name</th>
+                                <th class="text-center">Module</th>
+                                <th class="text-center">Issue Details</th>
+                                <th class="text-center">Issue Type</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">More..</th>
+                                <th class="text-center">Action</th>
+                                <th class="text-center">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.AftersalesPmHwIssueVerificationModels.Any())
+                            {
+                                for (int i = 0; i < Model.AftersalesPmHwIssueVerificationModels.Count; i++)
+                                {
+                                    <tr class="trClsforSize">
+                                        <td></td>
+                                        <td class="text-center" style="display: none">@Model.AftersalesPmHwIssueVerificationModels[i].Id</td>
+                                        <td class="text-center">@Model.AftersalesPmHwIssueVerificationModels[i].ModelName</td>
+                                        <td class="text-center">@Model.AftersalesPmHwIssueVerificationModels[i].SupplierName</td>
+                                        <td class="text-center">@Model.AftersalesPmHwIssueVerificationModels[i].SoftwareVersionNo</td>
+                                        <td class="text-center">@Model.AftersalesPmHwIssueVerificationModels[i].SoftwareVersionName</td>
+                                        <td class="text-center">@Model.AftersalesPmHwIssueVerificationModels[i].Module</td>
+                                        <td class="text-center">@Model.AftersalesPmHwIssueVerificationModels[i].IssueDetails</td>
+                                        <td class="text-center">@Model.AftersalesPmHwIssueVerificationModels[i].IssueType</td>
+                                        <td class="text-center">
+                                            @if (@Model.AftersalesPmHwIssueVerificationModels[i].Status == "ASSIGNED")
+                                            {
+                                                <p style="color:green;font-weight: bold">@Model.AftersalesPmHwIssueVerificationModels[i].Status</p>
+                                            }
+                                            else if (@Model.AftersalesPmHwIssueVerificationModels[i].Status == "DECLINED")
+                                            {
+                                                <p style="color: red; font-weight: bold">@Model.AftersalesPmHwIssueVerificationModels[i].Status</p>
+                                            }
+                                            else
+                                            {
+                                                <p style="color: blue; font-weight: bold">@Model.AftersalesPmHwIssueVerificationModels[i].Status</p>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            Issue Frequency : @Model.AftersalesPmHwIssueVerificationModels[i].IssueFrequency
+                                            <a href="#" data-toggle="tooltip" title="Path : @Model.AftersalesPmHwIssueVerificationModels[i].TestingPath, Result : @Model.AftersalesPmHwIssueVerificationModels[i].ResultFound, Data : @Model.AftersalesPmHwIssueVerificationModels[i].Data, IssueOccRatio :@Model.AftersalesPmHwIssueVerificationModels[i].IssueOccRatio, ASPM Check HS : @Model.AftersalesPmHwIssueVerificationModels[i].NumberOfHSsChecked, Num of HS Return : @Model.AftersalesPmHwIssueVerificationModels[i].NumberOfHSsReturn, Remarks : @Model.AftersalesPmHwIssueVerificationModels[i].Remarks">More...</a>
+                                        </td>
+                                        <td style="text-align: left">
+                                            @if (@Model.AftersalesPmHwIssueVerificationModels[i].Status == "RequirementPlaced")
+                                            {
+                                                <button type="submit" class="btn btnForward" id="btnForward" style="background: #C5E0B4;font-weight: bold">
+                                                    FORWARD
+                                                </button>
+                                                <br />
+                                                <br />
+                                                <button type="submit" class="btn btnAccept" id="btnAccept" style="background: #FFFF00; font-weight: bold">
+                                                    ACCEPT
+                                                </button>
+                                                <br />
+                                                <br />
+                                            }
+                                            else if (@Model.AftersalesPmHwIssueVerificationModels[i].Status == "RequirementClosed" || @Model.AftersalesPmHwIssueVerificationModels[i].Status == "RequirementAccepted" || @Model.AftersalesPmHwIssueVerificationModels[i].Status == "ReportAccepted")
+                                            {
+
+                                                if (@Model.AftersalesPmHwIssueVerificationModels[i].Status == "RequirementAccepted")
+                                                {
+                                                    <button type="submit" class="btn btnClose" id="btnClose" style="background: #FFFF00; font-weight: bold">
+                                                        REQUIREMENT CLOSE
+                                                    </button>
+                                                }
+                                                else if (@Model.AftersalesPmHwIssueVerificationModels[i].Status == "ReportAccepted")
+                                                {
+                                                    <button type="submit" class="btn btnClose" id="btnClose" style="background: #FFFF00; font-weight: bold">
+                                                        CLOSE
+                                                    </button>
+                                                }
+                                                else if (@Model.AftersalesPmHwIssueVerificationModels[i].Status == "RequirementClosed")
+                                                {
+                                                    <button type="submit" class="btn btnClose" id="btnClose" style="background: #FFFF00; font-weight: bold">
+                                                        CLOSE
+                                                    </button>
+                                                }
+                                                <br />
+                                                <br />
+                                            }
+                                            else if (@Model.AftersalesPmHwIssueVerificationModels[i].Status.Trim() == "ReportShared")
+                                            {
+                                                <button type="submit" class="btn btnForwardReport" id="btnForwardReport" style="background: #C5E0B4;font-weight: bold">
+                                                    FORWARD
+                                                </button>
+                                                <br /><br />
+                                                <button type="submit" class="btn btnAcceptReport" id="btnAcceptReport" style="background: #FFFF00; font-weight: bold">
+                                                    ACCEPT
+                                                </button>
+                                            }
+                                        </td>
+
+                                        <td class="text-center">
+                                            <a class="btn btn-circle btn-success" target="_blank" href='@Url.Action("AftersalesPmHarwareIssueDetails", "AftersalesPm", new { issueIds = @Model.AftersalesPmHwIssueVerificationModels[i].Id })'>
+                                                <span class="glyphicon glyphicon-list-alt"></span> Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- END VALIDATION STATES-->
+    </div>
+</div>
+
+@*modal_1*@
+<div class="modal fade " id="draggable1" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-content">
+        <div class="">
+            <div class="modal-header">
+                <h5 class="modal-title h4" id="exampleModalFullscreenLabel" style="text-align: center;font-weight: bold;text-decoration: underline;">ISSUE DETAILS</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+                            <div class="portlet-body">
+                                <form>
+                                    <div class="table-scrollable table-responsive form-group div1">
+                                        <br />
+                                        <h3 style="color: darkslateblue; font-weight: bold; text-align: center; font-size: 25px"> Details</h3>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Model Name
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        @if (Model != null && Model.ProjectMasterModels.Any())
+                                                        {
+
+                                                            @Html.DropDownListFor(model => model.ProjectMasterId, new SelectList(ViewBag.ProjectName, "Value", "Text"), "Select Project", new { @class = "form-control ddChosen", @id = "ProjectName", @onchange = "proChange()" })
+
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Software Version No.
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <input type="number" name="issueList[0].SoftwareVersionNo" id="swVersionNo" value="" class="form-control" onchange="SoftNoChange()" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Software Version Name
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <input type="text" name="issueList[0].SoftwareVersionName" id="versionName" value="" class="form-control" readonly="readonly" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Module
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <input type="text" name="issueList[0].Module" id="moduleName" value="" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Frequency
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <input type="text" name="issueList[0].IssueFrequency" id="IssueFrequency" value="" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Issue Type
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <select name="issueList[0].IssueType" id="issueType" class="form-control ">
+                                                            <option value="0">SELECT</option>
+                                                            <option value="MINOR">MINOR</option>
+                                                            <option value="MAJOR">MAJOR</option>
+                                                            <option value="CRITICAL">CRITICAL</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Issue Details
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <textarea name="issueList[0].IssueDetails" id="issueDetails" rows="3" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Path
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <textarea name="issueList[0].TestingPath" id="testingPath" rows="3" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Result
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <textarea name="issueList[0].ResultFound" id="ResultFound" rows="3" class="form-control"></textarea>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Data
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <input type="text" name="issueList[0].Data" id="Data" value="" class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Issue Occ Ratio
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <textarea name="issueList[0].IssueOccRatio" id="IssueOccRatio" rows="3" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        ASPM Check HS
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <input type="number" name="issueList[0].NumberOfHSsChecked" id="NumberOfHSsChecked" value="" class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Remarks
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <textarea name="issueList[0].Remarks" id="Remarks" rows="3" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="font-weight: bold">
+                                                        Num of HS Return
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                        <input type="number" name="issueList[0].NumberOfHSsReturn" id="NumberOfHSsReturn" value="" class="form-control" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-4">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br /><br /><br /><br /><br /><br />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button type="button" class="btn red btnClose" id="btnClose" data-dismiss="modal">CLOSE</button>
+                <input type="submit" id="btnModalSave1" class="btn green-dark btnModalSave1 blink" data-dismiss="modal" value="SAVE" />
+            </div>
+        </div>
+    </div>
+</div>
+@*modal_2*@
+<div class="modal fade " id="draggable" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title" style="font-weight: bold; color: #26A1AB;">Forward to R&D for rechecking</h4>
+            </div>
+            <div class="modal-body" style="background:lightslategray">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label" style="color:white;font-weight: bold">Project Name :</label>
+                        <input name="ProjectName1" id="ProjectName1" readonly="readonly" type="text" class="form-control" style="font-weight: bold;color:black">
+                    </div>
+                    <div class="form-group" style="display: none;">
+                        <label class="control-label">Ids:</label>
+                        <input name="MainId1" id="MainId1" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="control-label" style="color:white;font-weight: bold">Forward Reason :</label>
+                        <textarea name="ForwardReason" id="ForwardReason" class="form-control" rows="5" id="message-text" style="color:black"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn dark btn-outline" data-dismiss="modal" style="font-weight: bold">CLOSE</button>
+                <input type="submit" id="smitModalOfSave" class="btn green smitModalOfSave" value="SAVE" style="font-weight: bold" />
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+@*modal_2*@
+<div class="modal fade " id="draggable11" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title" style="font-weight: bold; color: #26A1AB;">Forward to R&D for rechecking</h4>
+            </div>
+            <div class="modal-body" style="background:lightslategray">
+                <form>
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label" style="color:white;font-weight: bold">Project Name :</label>
+                        <input name="ProjectName2" id="ProjectName2" readonly="readonly" type="text" class="form-control" style="font-weight: bold;color:black">
+                    </div>
+                    <div class="form-group" style="display: none;">
+                        <label class="control-label">Ids:</label>
+                        <input name="MainId2" id="MainId2" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="control-label" style="color:white;font-weight: bold">Forward Reason :</label>
+                        <textarea name="ForwardReason2" id="ForwardReason2" class="form-control" rows="5" id="message-text" style="color:black"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn dark btn-outline" data-dismiss="modal" style="font-weight: bold">CLOSE</button>
+                <input type="submit" id="smitModalOfSave2" class="btn green smitModalOfSave2" value="SAVE" style="font-weight: bold" />
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div id="loading" style="display: none;text-align: center;">
+    <img src="~/img/loading-spinner-grey.gif" />
+</div>
+
+<script>
+    /////sample_1 update with YES or No///
+    $(function () {
+        $("body:first").addClass("page-sidebar-closed");
+        $("ul.page-sidebar-menu").addClass("page-sidebar-menu-closed");
+
+        $('.btn1').on('click', function (e) {
+
+            $('#draggable1').modal();
+
+        });
+
+        $('.ddChosen', this).chosen();
+
+        // btnModalSave1
+        $('.btnModalSave1').on('click', function (e) {
+            var projectName = $("#ProjectName :selected").text();
+            var projectId = $("#ProjectName :selected").val();
+            var swVersionNo = $("#swVersionNo").val();
+            var versionName = $("#versionName").val();
+            var moduleName = $("#moduleName").val();
+            var issueFrequency = $("#IssueFrequency").val();
+            var issueType = $("#issueType :selected").text();
+            var issueDetails = $("#issueDetails").val();
+            var testingPath = $("#testingPath").val();
+            var resultFound = $("#ResultFound").val();
+            var data1 = $("#Data").val();
+            var issueOccRatio = $("#IssueOccRatio").val();
+            var numberOfHSsChecked = $("#NumberOfHSsChecked").val();
+            var remarks = $("#Remarks").val();
+            var numberOfHSsReturn = $("#NumberOfHSsReturn").val();
+
+            var obj = {};
+            var objArr = [];
+
+            obj.projectName = projectName;
+            obj.projectId = projectId;
+            obj.swVersionNo = swVersionNo;
+            obj.versionName = versionName;
+            obj.moduleName = moduleName;
+            obj.issueFrequency = issueFrequency;
+            obj.issueType = issueType;
+            obj.issueDetails = issueDetails;
+            obj.testingPath = testingPath;
+            obj.resultFound = resultFound;
+            obj.data1 = data1;
+            obj.issueOccRatio = issueOccRatio;
+            obj.numberOfHSsChecked = numberOfHSsChecked;
+            obj.remarks = remarks;
+            obj.numberOfHSsReturn = numberOfHSsReturn;
+
+            objArr.push(obj);
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveAftersalesPmHarwareIssue", "AftersalesPm")',
+                // data: "{objArr:'" + JSON.stringify(objArr) + "'}",
+                data: "{ projectName: '" + projectName + "', projectId: '" + projectId + "', swVersionNo: '" + swVersionNo + "', versionName: '" + versionName
+                    + "', moduleName: '" + moduleName + "', issueFrequency: '" + issueFrequency + "', issueType: '" + issueType
+                    + "', issueDetails: '" + issueDetails + "', testingPath: '" + testingPath + "', resultFound: '" + resultFound + "', data1: '" + data1
+                   + "', issueOccRatio: '" + issueOccRatio + "', numberOfHSsChecked: '" + numberOfHSsChecked + "', remarks: '" + remarks + "', numberOfHSsReturn: '" + numberOfHSsReturn + "'}",
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                //async: false,
+                success: function (data) {
+                    debugger;
+                    console.log("data :" + data);
+                    if (data.data == "ok") {
+                        alertify.dialog('alert').set({
+                            'title': '   ',
+                            'transition': 'zoom',
+                            'message': "Data saved successfully",
+                        }).show();
+
+                        window.location = '@Url.Action("AftersalesPmHarwareIssue", "AfterSalesPm")';
+                        window.location.reload(true);
+                        $('#loading').hide();
+                    }
+                }
+            });
+            $('#draggable1').modal('hide');
+        });//btn End
+
+        $('.smitModalOfSave').on('click', function (e) {
+            $('#draggable').modal('hide');
+            $('#loading').show();
+            var id = $('#MainId1').val();
+            var ForwardReason = document.getElementById("ForwardReason").value;
+
+            if (ForwardReason == "") {
+
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please input Forward Reason.",
+                }).show();
+                $('#loading').hide();
+
+                return false;
+            }
+
+            var obj = {};
+            obj.Id = id;
+            obj.ForwardReason = ForwardReason;
+
+            $.ajax({
+                url: '@Url.Action("SaveForwardData", "AftersalesPm")',
+                type: 'POST',
+                data: JSON.stringify(obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                async: false,
+                success: function (data) {
+                    if (data.data == "ok") {
+                        window.location = '@Url.Action("AftersalesPmHarwareIssue", "AftersalesPm")';
+                        window.location.reload(true);
+                        $('#loading').hide();
+                    }
+                }
+            });
+        });
+        $('.smitModalOfSave2').on('click', function (e) {
+            $('#draggable11').modal('hide');
+            $('#loading').show();
+            var id = $('#MainId2').val();
+            var ForwardReason = document.getElementById("ForwardReason2").value;
+
+            if (ForwardReason == "") {
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please input Forward Reason.",
+                }).show();
+                $('#loading').hide();
+                return false;
+            }
+
+            var obj = {};
+            obj.Id = id;
+            obj.ForwardReason = ForwardReason;
+
+            $.ajax({
+                url: '@Url.Action("SaveReportForwardData", "AftersalesPm")',
+                type: 'POST',
+                data: JSON.stringify(obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                async: false,
+                success: function (data) {
+                    if (data.data == "ok") {
+                        window.location = '@Url.Action("AftersalesPmHarwareIssue", "AftersalesPm")';
+                        window.location.reload(true);
+                        $('#loading').hide();
+                    }
+                }
+            });
+        });
+        $("body").on("click", "#tbl1 #btnAccept", function () {
+            $('#loading').show();
+
+            var rowIndex = $(this).closest('tr').index() + 1;
+            var table = document.getElementById('tbl1');
+            var row = $(this).closest("tr");
+
+            var ids = $.trim(table.rows[rowIndex].cells[1].innerHTML);
+
+            // var id = $('#MainId1').val();
+            debugger;
+            var obj = {};
+            obj.Id = ids;
+
+            alertify.confirm('Accept Issue', 'Do you want to accept this issue?', function () {
+                alertify.success('Successfully Accepted.');
+                $.ajax({
+                    url: '@Url.Action("SaveAcceptedData", "AftersalesPm")',
+                    type: 'POST',
+                    data: JSON.stringify(obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    async: false,
+                    success: function (data) {
+                        if (data.data == "ok") {
+                            window.location = '@Url.Action("AftersalesPmHarwareIssue", "AftersalesPm")';
+                            window.location.reload(true);
+                            $('#loading').hide();
+                        }
+                    }
+                });
+
+                event.preventDefault(); //Prevent the default submit
+            }
+            , function () {
+                alertify.error('Cancel');
+                $('#loading').hide();
+            });
+
+        });
+        $("body").on("click", "#tbl1 #btnAcceptReport", function () {
+            $('#loading').show();
+
+            var rowIndex = $(this).closest('tr').index() + 1;
+            var table = document.getElementById('tbl1');
+            var row = $(this).closest("tr");
+
+            var ids = $.trim(table.rows[rowIndex].cells[1].innerHTML);
+
+            // var id = $('#MainId1').val();
+            debugger;
+            var obj = {};
+            obj.Id = ids;
+
+            alertify.confirm('Accept Issue', 'Do you want to accept this issue?', function () {
+                alertify.success('Successfully Accepted.');
+                $.ajax({
+                    url: '@Url.Action("SaveReportAcceptedData", "AftersalesPm")',
+                    type: 'POST',
+                    data: JSON.stringify(obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    async: false,
+                    success: function (data) {
+                        if (data.data == "ok") {
+                            window.location = '@Url.Action("AftersalesPmHarwareIssue", "AftersalesPm")';
+                            window.location.reload(true);
+                            $('#loading').hide();
+                        }
+                    }
+                });
+
+                event.preventDefault(); //Prevent the default submit
+            }
+            , function () {
+                alertify.error('Cancel');
+                $('#loading').hide();
+            });
+
+        });
+        $("body").on("click", "#tbl1 #btnClose", function () {
+            $('#loading').show();
+
+            var rowIndex = $(this).closest('tr').index() + 1;
+            var table = document.getElementById('tbl1');
+            var row = $(this).closest("tr");
+
+            var ids = $.trim(table.rows[rowIndex].cells[1].innerHTML);
+
+            // var id = $('#MainId1').val();
+            debugger;
+            var obj = {};
+            obj.Id = ids;
+
+            alertify.confirm('Close Issue', 'Do you want to close this issue?', function () {
+                alertify.success('Successfully Closed.');
+                $.ajax({
+                    url: '@Url.Action("SaveClosedIssueData", "AftersalesPm")',
+                    type: 'POST',
+                    data: JSON.stringify(obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    async: false,
+                    success: function (data) {
+                        if (data.data == "ok") {
+                            window.location = '@Url.Action("AftersalesPmHarwareIssue", "AftersalesPm")';
+                            window.location.reload(true);
+                            $('#loading').hide();
+                        }
+                    }
+                });
+
+                event.preventDefault(); //Prevent the default submit
+            }
+            , function () {
+                alertify.error('Cancel');
+                $('#loading').hide();
+            });
+
+        });
+    });
+
+    $(document).ready(function () {
+        //
+        $('[data-toggle="tooltip"]').tooltip();
+        //
+        var t = $('#tbl1').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "lengthMenu": [[10, 20, 30, 50, -1], [10, 20, 30, 50, "All"]],
+            "fixedHeader": {
+                header: true,
+                footer: true
+            }
+
+        });
+        t.on('order.dt search.dt', function () {
+            t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+
+
+        $("body").on("click", "#tbl1 #btnForward", function () {
+
+            var rowIndex = $(this).closest('tr').index() + 1;
+            var table = document.getElementById('tbl1');
+            var row = $(this).closest("tr");
+
+            var ids = $.trim(table.rows[rowIndex].cells[1].innerHTML);
+            var proName = $.trim(table.rows[rowIndex].cells[2].innerHTML);
+            $('#draggable').modal();
+
+            $('#ProjectName1').val(proName);
+            $('#MainId1').val(ids);
+        });
+        //
+        $("body").on("click", "#tbl1 #btnForwardReport", function () {
+
+            var rowIndex = $(this).closest('tr').index() + 1;
+            var table = document.getElementById('tbl1');
+            var row = $(this).closest("tr");
+
+            var ids = $.trim(table.rows[rowIndex].cells[1].innerHTML);
+            var proName = $.trim(table.rows[rowIndex].cells[2].innerHTML);
+            $('#draggable11').modal();
+
+            $('#ProjectName2').val(proName);
+            $('#MainId2').val(ids);
+        });
+        //
+    });
+    function proChange() {
+        $('#versionName').text("");
+        $('#versionName').val("");
+        $('#swVersionNo').val(0);
+        $('#swVersionNo').text(0);
+    }
+    function SoftNoChange() {
+
+        var obj = {};
+        //ProjectName
+        var projectName = $("#ProjectName :selected").text();
+        var projectId = $("#ProjectName :selected").val();
+        var swVersionNo = $('#swVersionNo').val();
+        obj.swVersionNo = swVersionNo;
+        obj.projectId = projectId;
+
+
+        if (swVersionNo != 0 && swVersionNo != null) {
+            $.ajax({
+                url: '@Url.Action("SoftwareVersionNameLoadForAll1", "AfterSalesPm")',
+                type: 'POST',
+                data: JSON.stringify(obj),
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    console.log(data);
+                    var items = $.parseJSON(data);
+                    debugger;
+                    if (items != null) {
+
+                        $('#versionName').val(items.SoftwareVersionName);
+                        $("#versionName").prop('readonly', true);
+
+                    } else {
+                        $('#versionName').val("");
+                        $("#versionName").prop('readonly', false);
+                    }
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+        }
+    }
+    $(document).on('submit', 'form', function () {
+        var buttons = $(this).find('[type="submit"]');
+        if ($(this).valid()) {
+            buttons.each(function (btn) {
+                $(buttons[btn]).prop('disabled', true);
+            });
+        } else {
+            buttons.each(function (btn) {
+                $(buttons[btn]).prop('disabled', false);
+            });
+        }
+    });
+</script>

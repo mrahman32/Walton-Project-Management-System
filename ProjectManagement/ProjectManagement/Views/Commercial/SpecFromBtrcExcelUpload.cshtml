@@ -1,0 +1,153 @@
+﻿@model ProjectManagement.Models.ForeignModelInfoFromBtrcModel
+@{
+    ViewBag.Title = "SpecFromBtrcExcelUpload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    table.dataTable td{
+        font-size: 12px;
+        font-weight: bolder;
+    }
+</style>
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">BTRC data excel upload</div>
+    </div>
+    <div class="portlet-body">
+        @using (Html.BeginForm("UploadBtrcSpec", "Commercial", FormMethod.Post, new { enctype = "multipart/form-data", @id = "formId" }))
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    @Html.TextBoxFor(x => x.BtrcFile, new { @class = "form-control", type = "file", id = "txtFileUpload" })
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-2">
+                    <input type="submit" class="btn btn-success" id="btnUpload" />
+                </div>
+            </div>
+        }
+        <hr/>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Brand</th>
+                            <th>Model</th>
+                            <th>Marketing Name</th>
+                            <th>Color</th>
+                            <th>Device Type</th>
+                            <th>App Ref</th>
+                            <th>Country of Origin</th>
+                            <th>Manufacturer As per IMEI TAC</th>
+                            <th>SIM</th>
+                            <th>Battery Capacity</th>
+                            <th>Battery Capacity(Tested)</th>
+                            <th>Charger Type</th>
+                            <th>Charger Output</th>
+                            <th>Processor</th>
+                            <th>RAM</th>
+                            <th>ROM</th>
+                            <th>NFC</th>
+                            <th>Bluetooth</th>
+                            <th>WLAN</th>
+                            <th>DataSpeed</th>
+                            <th>SarValue</th>
+                            <th>RearCamera</th>
+                            <th>FrontCamera</th>
+                            <th>CameraResolution</th>
+                            <th>RadioInterface</th>
+                            <th>SpectrumBands2G</th>
+                            <th>SpectrumBands3G</th>
+                            <th>SpectrumBands4G</th>
+                            <th>Motherboard</th>
+                            <th>ChipsetModel</th>
+                            <th>OperatingSystem</th>
+                            <th>ImportQtyAir</th>
+                            <th>ImportQtySea</th>
+                            <th>TotalQuantity</th>
+                            <th>ProductType</th>
+                            <th>UnitPrice</th>
+                            <th>UnitPriceBdt</th>
+                            <th>MarketingPeriod</th>
+                            <th>ImeiTac1</th>
+                            <th>ImeiTac2</th>
+                            <th>ImeiTac3</th>
+                            <th>ImeiTac4</th>
+                            <th>Imei1</th>
+                            <th>Imei2</th>
+                            <th>Imei3</th>
+                            <th>Imei4</th>
+                            <th>DisplaySize</th>
+                            <th>NOC Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var v in ViewBag.Specs)
+                        {
+                            <tr>
+                                <td>@v.Brand</td>
+                                <td>@v.ModelName</td>
+                                <td>@v.MarketingName</td>
+                                <td>@v.Color</td>
+                                <td>@v.DeviceType</td>
+                                <td>@v.AppRef</td>
+                                <td>@v.CountryOfOrigin</td>
+                                <td>@v.ManfAsPerIMEITac</td>
+                                <td>@v.NoOfSim</td>
+                                <td>@v.BatteryCapacity</td>
+                                <td>@v.BatteryCapacityTested</td>
+                                <td>@v.ChargerType</td>
+                                <td>@v.ChargerOutput</td>
+                                <td>@v.Processor</td>
+                                <td>@v.Ram</td>
+                                <td>@v.Rom</td>
+                                <td>@v.Nfc</td>
+                                <td>@v.Bluetooth</td>
+                                <td>@v.Wlan</td>
+                                <td>@v.DataSpeed</td>
+                                <td>@v.SarValue</td>
+                                <td>@v.RearCamera</td>
+                                <td>@v.FrontCamera</td>
+                                <td>@v.CameraResolution</td>
+                                <td>@v.RadioInterface</td>
+                                <td>@v.SpectrumBands2G</td>
+                                <td>@v.SpectrumBands3G</td>
+                                <td>@v.SpectrumBands4G</td>
+                                <td>@v.Motherboard</td>
+                                <td>@v.ChipsetModel</td>
+                                <td>@v.OperatingSystem</td>
+                                <td>@v.ImportQtyAir</td>
+                                <td>@v.ImportQtySea</td>
+                                <td>@v.TotalQuantity</td>
+                                <td>@v.ProductType</td>
+                                <td>@v.UnitPrice</td>
+                                <td>@v.UnitPriceBdt</td>
+                                <td>@v.MarketingPeriod</td>
+                                <td>@v.ImeiTac1</td>
+                                <td>@v.ImeiTac2</td>
+                                <td>@v.ImeiTac3</td>
+                                <td>@v.ImeiTac4</td>
+                                <td>@v.Imei1</td>
+                                <td>@v.Imei2</td>
+                                <td>@v.Imei3</td>
+                                <td>@v.Imei4</td>
+                                <td>@v.DisplaySize</td>
+                                <td>@v.NocDate</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('table').DataTable({        
+       scrollX:true 
+    });
+</script>

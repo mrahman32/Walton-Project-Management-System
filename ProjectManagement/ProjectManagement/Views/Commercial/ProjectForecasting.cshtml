@@ -1,0 +1,3017 @@
+﻿@using System.Web.Mvc.Html
+@using ProjectManagement.Infrastructures.Helper
+@model ProjectManagement.ViewModels.Commercial.VmProjectForecasting
+@*ProjectForecasting*@
+
+
+<style>
+    .DTFC_LeftBodyWrapper {
+        position: relative;
+        top: -11px !important;
+        left: 0px;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .DTFC_LeftBodyLiner {
+        position: relative;
+        top: 0px;
+        left: 0px;
+        overflow: hidden;
+        height: 200px;
+        max-height: 200px;
+    }
+    .page-header-fixed .page-container {
+        margin-top: 0px;
+    }
+
+    .navbar-fixed-top {
+        position: relative;
+    }
+    input[type=checkbox] {
+        /* Double-sized Checkboxes */
+        -ms-transform: scale(2); /* IE */
+        -moz-transform: scale(2); /* FF */
+        -webkit-transform: scale(2); /* Safari and Chrome */
+        -o-transform: scale(2); /* Opera */
+        padding: 10px;
+    }
+
+    .modal-fullscreen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    .modal-content {
+        height: 100%;
+        width: 100%;
+    }
+
+    .modal-body {
+        max-height: calc(100vh - 210px);
+        overflow-y: auto;
+        background: gray;
+    }
+
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 70px;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 999;
+        text-align: center;
+    }
+
+    #tbl tr th.clsWidth {
+        width: 30% !important;
+    }
+    
+   
+   /*.tbl tbody tr {
+     
+        width: 70%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+   
+    th, td {
+        white-space: nowrap;
+    }
+
+    div.dataTables_wrapper {
+       
+        margin: 0 auto;
+    }
+
+    th, td {
+        white-space: nowrap;
+    }*/
+
+    .tbl th, td {
+        white-space: nowrap;
+    }
+    .dataTables_scrollBody {
+        margin-top: -13px;
+    }
+
+    div.dataTables_wrapper {
+        /*width: 800px;*/
+        margin: 0 auto;
+    }
+    .tbl tbody tr td {
+        /*background: #fff;*/
+       
+    }
+
+    .tbl thead tr th {
+        /*background: #fff;*/
+      
+    }
+    .tbl th:first-child {
+        position: fixed;
+        left: 5px;
+    }
+</style>
+<script>
+    $('#modal_button').click(function (e) {
+        $('.modal').addClass('active');
+        e.preventDefault();
+    });
+
+    $('.modal').click(function (e) {
+        $('.modal').removeClass('active');
+        e.preventDefault();
+    });
+</script>
+@*NEW *@
+<script src="~/Scripts/New_2019/dataTables.fixedColumns.min.js"></script>
+<link href="~/Content/New_2019/fixedHeader.dataTables.min.css" rel="stylesheet" />
+<script src="~/Scripts/New_2019/dataTables.fixedHeader.min.js"></script>
+<div class="row">
+    <div class="col-lg-12">
+        <!-- BEGIN VALIDATION STATES-->
+        <div class="portlet light portlet-fit portlet-form bordered">
+            <div class="portlet-title" style="background: #435D7D">
+                <div class="caption">
+                    <i class="icon-settings font-white"></i>
+                    <span class="caption-subject font-white sbold uppercase">Project Forecasting</span>
+                </div>
+                <div class="actions">
+                    @*<input type="submit" value="ADD" class="btn btn-circle green sbold uppercase" />*@
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="form-body">
+                    <div class="row" id="repeatOrders">
+                        <div class="col-lg-12">
+                            <div class="col-lg-4">
+                                <div class="col-lg-6">
+                                    @if (ViewBag.Projects != null)
+                                    {
+                                        @Html.DropDownListFor(model => model.ProjectName, new SelectList(ViewBag.Projects, "Value", "Text"), "SELECT PROJECT", new { @class = "dropForProject form-control ddChosen", @id = "dropForProject", Value = @Model.ProjectName })
+                                    }
+                                </div>
+                                <div class="col-lg-3">
+                                    @*<input type="submit" value="ADD" class="btn btn-circle green sbold uppercase btn1" />*@
+                                    <button type="submit" class="btn btn-circle green-dark sbold uppercase btn1" id="btn1"><i class="fa fa-plus"></i></button>
+                                </div>
+                                <div class="col-lg-3"></div>
+                            </div>
+                            <div class="col-lg-4"></div>
+                            <div class="col-lg-4"></div>
+                        </div>
+                    </div>
+                    <br /><br /><br />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="col-lg-2">
+                                <div class="col-lg-5" style="text-align: right">
+                                    <input type="checkbox" id="newOrdersChk" class="newOrdersChk" name="newChk" value="newChk_CheckBx">
+                                </div>
+                                <div class="col-lg-7" style="text-align: left; font-weight: bold;color: red">
+                                    Is New Order?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br /><br /><br />
+                    <div class="row" id="newOrders" style="display: none">
+                        <div class="col-lg-12">
+                            <div class="col-lg-4">
+                                <div class="col-lg-6">
+                                    <input class="form-control proName" id="proName" placeholder="New Order Name" />
+                                </div>
+                                <div class="col-lg-3">
+                                    <button type="submit" class="btn btn-circle green-dark sbold uppercase btn2" id="btn2"><i class="fa fa-plus"></i></button>
+                                </div>
+                                <div class="col-lg-3"></div>
+                            </div>
+                            <div class="col-lg-4"></div>
+                            <div class="col-lg-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END VALIDATION STATES-->
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <!-- BEGIN VALIDATION STATES-->
+        <div class="portlet light portlet-fit portlet-form bordered">
+            <div class="portlet-body">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl2" id="tbl2">
+                        @*<table id="tbl" class="stripe row-border order-column tbl" style="width:100%">*@
+                        <thead style="background-color: #C00000; color: white;">
+                            <tr>
+                                <th class="text-center">Brand</th>
+                                <th class="text-center">Seg.</th>
+                                <th class="text-center">January</th>
+                                <th class="text-center">February</th>
+                                <th class="text-center">March</th>
+                                <th class="text-center">April</th>
+                                <th class="text-center">May</th>
+                                <th class="text-center">June</th>
+                                <th class="text-center">July</th>
+                                <th class="text-center">August</th>
+                                <th class="text-center">September</th>
+                                <th class="text-center">October</th>
+                                <th class="text-center">November</th>
+                                <th class="text-center">December</th>
+                                <th class="text-center">FY</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.ProjectForecastingInfoModels2.Any())
+                            {
+                                for (int i = 0; i < Model.ProjectForecastingInfoModels2.Count; i++)
+                                {
+                                    <tr class="trClsforSize">
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].Brand</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].FSegment</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].January</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].February</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].March</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].April</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].May</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].June</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].July</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].August</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].September</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].October</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].November</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].December</td>
+                                        <td class="text-center">@Model.ProjectForecastingInfoModels2[i].TotalSum</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- END VALIDATION STATES-->
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <!-- BEGIN VALIDATION STATES-->
+        <div class="portlet light portlet-fit portlet-form bordered">
+            @*<div class="portlet-title" style="background: #435D7D">
+                <div class="caption">
+                    <i class="icon-settings font-white"></i>
+                    <span class="caption-subject font-white sbold uppercase">Project Forecasting List</span>
+                </div>
+                <div class="actions">
+                 
+                </div>
+            </div>*@
+            <div class="portlet-body">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl" id="tbl">
+                        <thead style="background-color: #4a8099;color: white;">
+                            <tr>
+                                <th class="text-center" style="display: none;"> ProjectMasterId </th>
+                                <th class="text-center" style="background-color: #AEAAAA; color: black"> Project Name </th>
+                                <th class="text-center" style="background-color: #AEAAAA; color: black">Project Type</th>
+                                <th class="text-center  clsWidth" style="background-color: #AEAAAA;color:black">LaunchDate</th>
+                                <th class="text-center  clsWidth" style="background-color: #AEAAAA;color:black">PLC</th>
+                                <th class="text-center  clsWidth" style="background-color: #AEAAAA;color:black">Brand</th>
+                                <th class="text-center  clsWidth" style="background-color: #AEAAAA;color:black">FSegment</th>
+                                <th class="text-center  clsWidth" style="background-color: #AEAAAA;color:black">Display</th>
+                                <th class="text-center  clsWidth" style="background-color: #AEAAAA;color:black">Battery</th>
+                                <th class="text-center  clsWidth" style="background-color: #AEAAAA;color:black">RAM</th>
+                                <th class="text-center  clsWidth" style="background-color: #AEAAAA;color:black">ROM</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:red">FOB$</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">January</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">February</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">March</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">April</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">May</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">June</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">July</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">August</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">September</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">October</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">November</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">December</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">FY</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">BDStock</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">OpenPo</th>
+                                <th class="text-center  clsWidth" style="background-color: #FFF2CC;color:black">TTL</th>
+                                <th class="text-center  clsWidth">Update</th>
+                                <th class="text-center  clsWidth">Delete</th>
+                                <th class="text-center" style="display: none;"> Ids </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.ProjectForecastingInfoModels.Any())
+                            {
+                                for (int i = 0; i < Model.ProjectForecastingInfoModels.Count; i++)
+                                {
+                                    <tr class="trClsforSize">
+                                        <td style="display:none" class="clsWidth">@Model.ProjectForecastingInfoModels[i].ProjectMasterId</td>
+                                        <td class="text-center  clsWidth">
+                                            @Model.ProjectForecastingInfoModels[i].ProjectName
+                                        </td>
+                                        <td class="text-center  clsWidth">
+                                            @Model.ProjectForecastingInfoModels[i].ProjectType
+                                        </td>
+                                        <td class="text-center  clsWidth" style="width:110px">
+                                            @if (@Model.ProjectForecastingInfoModels[i].ProjectMasterId != 0)
+                                            {
+
+                                                if (@Model.ProjectForecastingInfoModels[i].LaunchDate != null)
+                                                {
+                                                    @String.Format("{0:yyyy-MM-dd}", @Model.ProjectForecastingInfoModels[i].LaunchDate)
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @*<input type="text" class="form-control launchDate2" value="@Model.ProjectForecastingInfoModels[i].LaunchDate" placeholder=" yyyy-mm-dd" id="launchDate2">*@
+                                                @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].LaunchDate, "{0:yyyy-MM-dd}", new { @class = "form-control datepicker launchDate2", id = "launchDate2", Type = "text", placeholder = "YYYY-MM-DD", style = "text-align: center;width:110px" })
+
+                                            }
+                                        </td>
+                                        <td class="text-center  clsWidth" style="width:110px">
+                                            @Html.DropDownListFor(model => model.ProjectForecastingInfoModels[i].Plc, new SelectList(new List<SelectListItem>
+                                                        {
+
+                                                            new SelectListItem { Text = "NP", Value = "NP"},
+                                                            new SelectListItem { Text = "EOL", Value = "EOL"},
+                                                            new SelectListItem { Text = "MP", Value = "MP"}
+
+                                                        }, "Value", "Text", Model.ProjectForecastingInfoModels[i].Plc), "SELECT", new { @class = "form-control plcVal2", @id = "plcVal2", style = "width:110px" })
+                                        </td>
+                                        <td class="text-center  clsWidth" style="width:110px">
+                                            @if (@Model.ProjectForecastingInfoModels[i].ProjectMasterId != 0)
+                                            {
+
+                                                @Model.ProjectForecastingInfoModels[i].Brand
+                                            }
+                                            else
+                                            {
+                                                @Html.DropDownListFor(model => model.ProjectForecastingInfoModels[i].Brand, new SelectList(new List<SelectListItem>
+                                                            {
+
+                                                                new SelectListItem { Text = "Walton", Value = "Walton"},
+                                                                new SelectListItem { Text = "Marcel", Value = "Marcel"}
+
+                                                            }, "Value", "Text", Model.ProjectForecastingInfoModels[i].Brand), "SELECT", new { @class = "form-control brandName2", @id = "brandName2", style = "width:110px" })
+
+                                            }
+                                        </td>
+                                        <td class="text-center  clsWidth" style="width:110px">
+                                            @Html.DropDownListFor(model => model.ProjectForecastingInfoModels[i].FSegment, new SelectList(new List<SelectListItem>
+                                                        {
+
+                                                            new SelectListItem { Text = "FP", Value = "FP"},
+                                                            new SelectListItem { Text = "SP", Value = "SP"}
+
+                                                        }, "Value", "Text", Model.ProjectForecastingInfoModels[i].FSegment), "SELECT", new { @class = "form-control fSegmentVal2", @id = "fSegmentVal2", style = "width:110px" })
+
+                                        </td>
+                                        <td class="text-center  clsWidth" style="width:110px">
+                                            @if (@Model.ProjectForecastingInfoModels[i].ProjectMasterId != 0)
+                                            {
+
+                                                @Model.ProjectForecastingInfoModels[i].Display
+                                            }
+                                            else
+                                            {
+
+                                                @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].Display, new { @class = "form-control display2", id = "display2", Type = "text", style = "text-align: center;width:110px" })
+
+                                            }
+                                        </td>
+                                        <td class="text-center  clsWidth" style="width:110px">
+                                            @if (@Model.ProjectForecastingInfoModels[i].ProjectMasterId != 0)
+                                            {
+
+                                                @Model.ProjectForecastingInfoModels[i].Battery
+                                            }
+                                            else
+                                            {
+
+                                                @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].Battery, new { @class = "form-control battery2", id = "battery2", Type = "text", style = "text-align: center;width:110px" })
+
+                                            }
+                                        </td>
+                                        <td class="text-center  clsWidth" style="width:110px">
+                                            @if (@Model.ProjectForecastingInfoModels[i].ProjectMasterId != 0)
+                                            {
+
+                                                @Model.ProjectForecastingInfoModels[i].Ram
+                                            }
+                                            else
+                                            {
+
+                                                @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].Ram, new { @class = "form-control ramVal2", id = "ramVal2", Type = "text", style = "text-align: center;width:110px" })
+
+                                            }
+                                        </td>
+                                        <td class="text-center  clsWidth" style="width:110px">
+                                            @if (@Model.ProjectForecastingInfoModels[i].ProjectMasterId != 0)
+                                            {
+
+                                                @*@Model.ProjectForecastingInfoModels[i].Rom*@
+                                                @Html.DisplayFor(model => model.ProjectForecastingInfoModels[i].Rom)
+
+                                            }
+                                            else
+                                            {
+
+                                                @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].Rom, new { @class = "form-control romVal2", id = "romVal2", Type = "text", style = "text-align: center;width:110px" })
+
+                                            }
+                                        </td>
+                                        <td class="text-center  clsWidth" style="width:120px">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].Fob, new { @class = "form-control fobVal2", id = "fobVal2", Type = "number", min = "0", style = "text-align: center;width:120px" })
+                                        </td>
+                                        <td class="text-center  clsWidth january22" id="january22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].January, new { @class = "form-control january2", id = "january2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionJan2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth february22" id="february22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].February, new { @class = "form-control february2", id = "february2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionFeb2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth march22" id="march22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].March, new { @class = "form-control march2", id = "march2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionMar2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth april22" id="april22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].April, new { @class = "form-control april2", id = "april2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionAprl2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth may22" id="may22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].May, new { @class = "form-control may2", id = "may2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionMay2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth june22" id="june22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].June, new { @class = "form-control june2", id = "june2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionJune2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth july22" id="july22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].July, new { @class = "form-control july2", id = "july2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionJuly2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth august22" id="august22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].August, new { @class = "form-control august2", id = "august2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionAugst2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth september22" id="september22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].September, new { @class = "form-control september2", id = "september2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionSept2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth october22" id="october22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].October, new { @class = "form-control october2", id = "october2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionOct2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth november22" id="november22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].November, new { @class = "form-control november2", id = "november2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionNov2(this.value)" })
+                                        </td>
+                                        <td class="text-center  clsWidth december22" id="december22">
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].December, new { @class = "form-control december2", id = "december2", Type = "number", min = "0", style = "text-align: center;width:120px", onchange = "myChangeFunctionDec2(this.value)" })
+                                        </td>
+                                        <td>
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].TotalSum, new { @class = "form-control TotalSum2", id = "TotalSum2", Type = "number", style = "text-align: center;width:120px;", disabled = "disabled" })
+                                        </td>
+                                        <td>
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].BDStock, new { @class = "form-control BDStock", id = "BDStock", Type = "number", style = "text-align: center;width:120px;", disabled = "disabled" })
+                                        </td>
+                                        <td>
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].OpenPo, new { @class = "form-control OpenPo", id = "OpenPo", Type = "number", style = "text-align: center;width:120px;", disabled = "disabled" })
+                                        </td>
+                                        <td>
+                                            @Html.TextBoxFor(model => model.ProjectForecastingInfoModels[i].TTL, new { @class = "form-control TTL", id = "TTL", Type = "number", style = "text-align: center;width:120px;", disabled = "disabled" })
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-circle green-dark sbold uppercase btnUpdate" id="btnUpdate"><i class="fa fa-edit"></i></button>
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-circle red sbold uppercase btnDelete" id="btnDelete"><i class="fa fa-times"></i></button>
+                                        </td>
+                                        <td style="display:none">@Model.ProjectForecastingInfoModels[i].Id</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- END VALIDATION STATES-->
+    </div>
+</div>
+@*modal_1*@
+<div class="modal fade " id="draggable1" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-content">
+        <div class="">
+            <div class="modal-header">
+                <h5 class="modal-title h4" id="exampleModalFullscreenLabel" style="text-align: center;font-weight: bold;text-decoration: underline;">PROJECT DETAILS</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+                            <div class="portlet-body">
+                                <form>
+                                    <div class="table-scrollable table-responsive form-group div1">
+                                        <br />
+                                        <h3 style="color: darkslateblue; font-weight: bold; text-align: center; font-size: 25px"> Project Spec.</h3>
+                                        <br />
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-3">
+                                                <input name="ProjectMasterId1" id="ProjectMasterId1" disabled="disabled" type="text" class="form-control" style="display: none">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">Project Name :</label>
+                                                <input name="ProjectName1" id="ProjectName1" disabled="disabled" type="text" class="form-control">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">Launch Date :</label>
+                                                <input type="text" class="form-control launchDate1" disabled="disabled" placeholder="yyyy-mm-dd" id="launchDate1">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">PLC :</label>
+                                                <select name="plcVal1" id="plcVal1" class="form-control input-small plcVal1">
+                                                    <option value="SELECT">SELECT</option>
+                                                    <option value="NP">NP</option>
+                                                    <option value="EOL">EOL</option>
+                                                    <option value="MP">MP</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">Brand :</label>
+                                                @*<select name="brandName1" class="form-control input-small brandName1" id="brandName1">
+                                                        <option value="SELECT">SELECT</option>
+                                                        <option value="WALTON">WALTON</option>
+                                                        <option value="MARCEL">MARCEL</option>
+                                                    </select>*@
+                                                <input name="brandName1" id="brandName1" disabled="disabled" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">F.Segment :</label>
+                                                <input name="fSegmentVal1" id="fSegmentVal1" disabled="disabled" type="text" class="form-control">
+                                                @*<select name="fSegmentVal1" class="form-control input-small fSegmentVal1" id="fSegmentVal1">
+                                                        <option value="SELECT">SELECT</option>
+                                                        <option value="FP">FP</option>
+                                                        <option value="SP">SP</option>
+                                                    </select>*@
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">Display :</label>
+                                                <input name="display1" id="display1" type="number" min="0" class="form-control display1" disabled="disabled">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">Battery :</label>
+                                                <input name="battery1" id="battery1" type="text" min="0" class="form-control battery1" disabled="disabled">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">RAM :</label>
+                                                <input name="ramVal1" id="ramVal1" type="text" min="0" class="form-control ramVal1" disabled="disabled">
+                                            </div>
+                                        </div>
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">ROM :</label>
+                                                <input name="romVal1" id="romVal1" type="text" min="0" class="form-control romVal1" disabled="disabled">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">FOB :</label>
+                                                <input name="fobVal1" id="fobVal1" type="number" min="0" class="form-control fobVal1">
+                                            </div>
+                                            <div class="col-lg-3">
+                                            </div>
+                                            <div class="col-lg-3">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="table-scrollable table-responsive div2">
+                                        <br />
+                                        <h3 style="color: darkslateblue; font-weight: bold; text-align: center; font-size: 25px;"> Month Wise Forecast</h3>
+                                        <br />
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-4">
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="col-lg-12">
+                                                    <div class="col-lg-6">
+                                                        <label for="recipient-name" class="control-label" style="font-weight: bold">Total SUM: </label>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <input name="totalSum1" id="totalSum1" type="number" min="0" class="form-control totalSum1" disabled="disabled">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                            </div>
+                                        </div>
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">JANUARY </label>
+                                                <input name="january1" id="january1" type="number" min="0" class="form-control" onchange="myChangeFunctionJan1(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">FEBRUARY </label>
+                                                <input name="february1" id="february1" type="number" min="0" class="form-control" onchange="myChangeFunctionFeb1(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">MARCH </label>
+                                                <input name="march1" id="march1" type="number" min="0" class="form-control" onchange="myChangeFunctionMar1(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">APRIL </label>
+                                                <input name="april1" id="april1" type="number" min="0" class="form-control" onchange="myChangeFunctionAprl1(this.value)">
+                                            </div>
+
+                                        </div>
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">MAY </label>
+                                                <input name="may1" id="may1" type="number" min="0" class="form-control" onchange="myChangeFunctionMay1(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">JUNE </label>
+                                                <input name="june1" id="june1" type="number" min="0" class="form-control" onchange="myChangeFunctionJune1(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">JULY</label>
+                                                <input name="july1" id="july1" type="number" min="0" class="form-control" onchange="myChangeFunctionJuly1(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">AUGUST</label>
+                                                <input name="august1" id="august1" type="number" min="0" class="form-control" onchange="myChangeFunctionAugst1(this.value)">
+                                            </div>
+                                        </div>
+                                        <div class="row form-group col-lg-12">
+
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">SEPTEMBER </label>
+                                                <input name="september1" id="september1" type="number" min="0" class="form-control" onchange="myChangeFunctionSept1(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">OCTOBER </label>
+                                                <input name="october1" id="october1" type="number" min="0" class="form-control" onchange="myChangeFunctionOct1(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">NOVEMBER </label>
+                                                <input name="november1" id="november1" type="number" min="0" class="form-control" onchange="myChangeFunctionNov1(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">DECEMBER </label>
+                                                <input name="december1" id="december1" type="number" min="0" class="form-control" onchange="myChangeFunctionDec1(this.value)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button type="button" class="btn red btnClose" id="btnClose" data-dismiss="modal">CLOSE</button>
+                <input type="submit" id="btnModalSave1" class="btn green-dark btnModalSave1 blink" data-dismiss="modal" value="SAVE" />
+            </div>
+        </div>
+    </div>
+</div>
+@*modal_2*@
+<div class="modal fade " id="draggable" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-content">
+        <div class="">
+            <div class="modal-header">
+                <h5 class="modal-title h4" id="exampleModalFullscreenLabel" style="text-align: center;font-weight: bold;text-decoration: underline;">PROJECT DETAILS</h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet light bordered">
+                            <div class="portlet-body">
+                                <form>
+                                    <div class="table-scrollable table-responsive form-group div1">
+                                        <br />
+                                        <h3 style="color: darkslateblue; font-weight: bold; text-align: center; font-size: 25px"> Project Spec.</h3>
+                                        <br />
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">Project Name :</label>
+                                                <input name="ProjectName" id="ProjectName" disabled="disabled" type="text" class="form-control">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">Launch Date :</label>
+                                                <input type="text" class="form-control launchDate" placeholder="yyyy-mm-dd" id="launchDate">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">PLC :</label>
+                                                <select name="plcVal" id="plcVal" class="form-control input-small plcVal">
+                                                    <option value="SELECT">SELECT</option>
+                                                    <option value="NP">NP</option>
+                                                    <option value="EOL">EOL</option>
+                                                    <option value="MP">MP</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">Brand :</label>
+                                                <select name="brandName" class="form-control input-small brandName" id="brandName">
+                                                    <option value="SELECT">SELECT</option>
+                                                    <option value="Walton">Walton</option>
+                                                    <option value="Marcel">Marcel</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">F.Segment :</label>
+                                                <select name="fSegmentVal" class="form-control input-small fSegmentVal" id="fSegmentVal">
+                                                    <option value="SELECT">SELECT</option>
+                                                    <option value="FP">FP</option>
+                                                    <option value="SP">SP</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">Display :</label>
+                                                <input name="display" id="display" type="number" min="0" class="form-control display">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">Battery :</label>
+                                                <input name="battery" id="battery" type="text" min="0" class="form-control battery">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">RAM :</label>
+                                                <input name="ramVal" id="ramVal" type="text" min="0" class="form-control ramVal">
+                                            </div>
+                                        </div>
+                                        <div class="row form-group col-lg-12">
+
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">ROM :</label>
+                                                <input name="romVal" id="romVal" type="text" min="0" class="form-control romVal">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">FOB :</label>
+                                                <input name="fobVal" id="fobVal" type="number" min="0" class="form-control fobVal">
+                                            </div>
+                                            <div class="col-lg-3">
+                                            </div>
+                                            <div class="col-lg-3">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="table-scrollable table-responsive div2">
+                                        <br />
+                                        <h3 style="color: darkslateblue; font-weight: bold; text-align: center; font-size: 25px;"> Month Wise Forecast</h3>
+                                        <br />
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-4">
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="col-lg-12">
+                                                    <div class="col-lg-6">
+                                                        <label for="recipient-name" class="control-label" style="font-weight: bold">Total SUM: </label>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <input name="totalSum" id="totalSum" type="number" min="0" class="form-control totalSum" disabled="disabled">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                            </div>
+                                        </div>
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">JANUARY </label>
+                                                <input name="january" id="january" type="number" min="0" class="form-control" onchange="myChangeFunctionJan(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">FEBRUARY </label>
+                                                <input name="february" id="february" type="number" min="0" class="form-control" onchange="myChangeFunctionFeb(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">MARCH </label>
+                                                <input name="march" id="march" type="number" min="0" class="form-control" onchange="myChangeFunctionMar(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">APRIL </label>
+                                                <input name="april" id="april" type="number" min="0" class="form-control" onchange="myChangeFunctionAprl(this.value)">
+                                            </div>
+
+                                        </div>
+                                        <div class="row form-group col-lg-12">
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">MAY </label>
+                                                <input name="may" id="may" type="number" min="0" class="form-control" onchange="myChangeFunctionMay(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">JUNE </label>
+                                                <input name="june" id="june" type="number" min="0" class="form-control" onchange="myChangeFunctionJune(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">JULY</label>
+                                                <input name="july" id="july" type="number" min="0" class="form-control" onchange="myChangeFunctionJuly(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">AUGUST</label>
+                                                <input name="august" id="august" type="number" min="0" class="form-control" onchange="myChangeFunctionAugst(this.value)">
+                                            </div>
+                                        </div>
+                                        <div class="row form-group col-lg-12">
+
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">SEPTEMBER </label>
+                                                <input name="september" id="september" type="number" min="0" class="form-control" onchange="myChangeFunctionSept(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">OCTOBER </label>
+                                                <input name="october" id="october" type="number" min="0" class="form-control" onchange="myChangeFunctionOct(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">NOVEMBER </label>
+                                                <input name="november" id="november" type="number" min="0" class="form-control" onchange="myChangeFunctionNov(this.value)">
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="recipient-name" class="control-label" style="font-weight: bold">DECEMBER </label>
+                                                <input name="december" id="december" type="number" min="0" class="form-control" onchange="myChangeFunctionDec(this.value)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button type="button" class="btn red btnClose" id="btnClose" data-dismiss="modal">CLOSE</button>
+                <input type="submit" id="btnModalSave" class="btn green-dark btnModalSave blink" data-dismiss="modal" value="SAVE" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<br /><br />
+<div id="loading" style="display: none;text-align: center;">
+    <img src="~/img/loading-spinner-grey.gif" />
+</div>
+<script>
+    $(function () {
+        $("body:first").addClass("page-sidebar-closed");
+        $("ul.page-sidebar-menu").addClass("page-sidebar-menu-closed");
+
+    
+    });
+    //var input2 = 0;
+    var intPt = 0;
+    var prebJanVal = 0;
+    var prebFebVal = 0;
+    var prebMarVal = 0;
+    var prebAprVal = 0;
+    var prebMayVal = 0;
+    var prebJuneVal = 0;
+    var prebJulyVal = 0;
+    var prebAugVal = 0;
+    var prebSeptVal = 0;
+    var prebOctVal = 0;
+    var prebNovVal = 0;
+    var prebDecVal = 0;
+
+    function myChangeFunctionJan(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebJanVal = prebJanVal;
+
+        if (prebJanVal != "" && prebJanVal != 0 && prebJanVal != "0") {
+            intPt = parseInt(input2.value) - prebJanVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebJanVal = input1;
+        } else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebJanVal = input1;
+        }
+
+
+        if (input2.value == "" || input2.value == "0" || input2.value == 0) {
+            input2.value = 0;
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+        else if (input2.value != "" && input2.value != "0" && input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+        //input2.value = parseInt(input2.value) + parseInt(input1);
+        //intPt = parseInt(input2.value) - prebJanVal;
+    }
+
+    function myChangeFunctionFeb(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebFebVal = prebFebVal;
+        if (prebFebVal != "" && prebFebVal != 0 && prebFebVal != "0") {
+            intPt = parseInt(input2.value) - prebFebVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            //  prebFebVal = prebFebVal;
+            prebFebVal = input1;
+        }
+            //else if (input1 == 0 ) {
+            //     input1 = 0;
+            //     prebFebVal = prebFebVal;
+            //}
+
+            //else if (input1 != "0" || input1 != "" || input1 != 0) {
+            //    input1 = parseInt(input1);
+            //    prebFebVal = input1;
+            //}
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebFebVal = input1;
+        }
+
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+        // input2.value = parseInt(input2.value) + parseInt(input1);
+        // input2.value = parseInt(input2.value) + parseInt(input1);
+
+
+    }
+
+    function myChangeFunctionMar(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebMarVal = prebMarVal;
+        if (prebMarVal != "" && prebMarVal != 0 && prebMarVal != "0") {
+            intPt = parseInt(input2.value) - prebMarVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebMarVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebMarVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+
+    }
+
+    function myChangeFunctionAprl(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebAprVal = prebAprVal;
+        if (prebAprVal != "" && prebAprVal != 0 && prebAprVal != "0") {
+            intPt = parseInt(input2.value) - prebAprVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebAprVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebAprVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionMay(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebMayVal = prebMayVal;
+        if (prebMayVal != "" && prebMayVal != 0 && prebMayVal != "0") {
+            intPt = parseInt(input2.value) - prebMayVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebMayVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebMayVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionJune(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebJuneVal = prebJuneVal;
+        if (prebJuneVal != "" && prebJuneVal != 0 && prebJuneVal != "0") {
+            intPt = parseInt(input2.value) - prebJuneVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebJuneVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebJuneVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionJuly(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebJulyVal = prebJulyVal;
+        if (prebJulyVal != "" && prebJulyVal != 0 && prebJulyVal != "0") {
+            intPt = parseInt(input2.value) - prebJulyVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebJulyVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebJulyVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionAugst(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebAugVal = prebAugVal;
+        if (prebAugVal != "" && prebAugVal != 0 && prebAugVal != "0") {
+            intPt = parseInt(input2.value) - prebAugVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebAugVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebAugVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionSept(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebSeptVal = prebSeptVal;
+        if (prebSeptVal != "" && prebSeptVal != 0 && prebSeptVal != "0") {
+            intPt = parseInt(input2.value) - prebSeptVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebSeptVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebSeptVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionOct(input1) {
+
+        var input2 = document.getElementById('totalSum');
+        prebOctVal = prebOctVal;
+        if (prebOctVal != "" && prebOctVal != 0 && prebOctVal != "0") {
+            intPt = parseInt(input2.value) - prebOctVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebOctVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebOctVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionNov(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebNovVal = prebNovVal;
+        if (prebNovVal != "" && prebNovVal != 0 && prebNovVal != "0") {
+            intPt = parseInt(input2.value) - prebNovVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebNovVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebNovVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionDec(input1) {
+        var input2 = document.getElementById('totalSum');
+        prebDecVal = prebDecVal;
+        if (prebDecVal != "" && prebDecVal != 0 && prebDecVal != "0") {
+            intPt = parseInt(input2.value) - prebDecVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebDecVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebDecVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    //
+    function myChangeFunctionJan1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebJanVal = prebJanVal;
+
+        if (prebJanVal != "" && prebJanVal != 0 && prebJanVal != "0") {
+            intPt = parseInt(input2.value) - prebJanVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebJanVal = input1;
+        } else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebJanVal = input1;
+        }
+
+
+        if (input2.value == "" || input2.value == "0" || input2.value == 0) {
+            input2.value = 0;
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+        else if (input2.value != "" && input2.value != "0" && input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+        //input2.value = parseInt(input2.value) + parseInt(input1);
+        //intPt = parseInt(input2.value) - prebJanVal;
+    }
+
+    function myChangeFunctionFeb1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebFebVal = prebFebVal;
+        if (prebFebVal != "" && prebFebVal != 0 && prebFebVal != "0") {
+            intPt = parseInt(input2.value) - prebFebVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            //  prebFebVal = prebFebVal;
+            prebFebVal = input1;
+        }
+            //else if (input1 == 0 ) {
+            //     input1 = 0;
+            //     prebFebVal = prebFebVal;
+            //}
+
+            //else if (input1 != "0" || input1 != "" || input1 != 0) {
+            //    input1 = parseInt(input1);
+            //    prebFebVal = input1;
+            //}
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebFebVal = input1;
+        }
+
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+        // input2.value = parseInt(input2.value) + parseInt(input1);
+        // input2.value = parseInt(input2.value) + parseInt(input1);
+
+
+    }
+
+    function myChangeFunctionMar1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebMarVal = prebMarVal;
+        if (prebMarVal != "" && prebMarVal != 0 && prebMarVal != "0") {
+            intPt = parseInt(input2.value) - prebMarVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebMarVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebMarVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+
+    }
+
+    function myChangeFunctionAprl1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebAprVal = prebAprVal;
+        if (prebAprVal != "" && prebAprVal != 0 && prebAprVal != "0") {
+            intPt = parseInt(input2.value) - prebAprVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebAprVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebAprVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionMay1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebMayVal = prebMayVal;
+        if (prebMayVal != "" && prebMayVal != 0 && prebMayVal != "0") {
+            intPt = parseInt(input2.value) - prebMayVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebMayVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebMayVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionJune1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebJuneVal = prebJuneVal;
+        if (prebJuneVal != "" && prebJuneVal != 0 && prebJuneVal != "0") {
+            intPt = parseInt(input2.value) - prebJuneVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebJuneVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebJuneVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionJuly1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebJulyVal = prebJulyVal;
+        if (prebJulyVal != "" && prebJulyVal != 0 && prebJulyVal != "0") {
+            intPt = parseInt(input2.value) - prebJulyVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebJulyVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebJulyVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionAugst1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebAugVal = prebAugVal;
+        if (prebAugVal != "" && prebAugVal != 0 && prebAugVal != "0") {
+            intPt = parseInt(input2.value) - prebAugVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebAugVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebAugVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionSept1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebSeptVal = prebSeptVal;
+        if (prebSeptVal != "" && prebSeptVal != 0 && prebSeptVal != "0") {
+            intPt = parseInt(input2.value) - prebSeptVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebSeptVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebSeptVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionOct1(input1) {
+
+        var input2 = document.getElementById('totalSum1');
+        prebOctVal = prebOctVal;
+        if (prebOctVal != "" && prebOctVal != 0 && prebOctVal != "0") {
+            intPt = parseInt(input2.value) - prebOctVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebOctVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebOctVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionNov1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebNovVal = prebNovVal;
+        if (prebNovVal != "" && prebNovVal != 0 && prebNovVal != "0") {
+            intPt = parseInt(input2.value) - prebNovVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebNovVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebNovVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+
+    function myChangeFunctionDec1(input1) {
+        var input2 = document.getElementById('totalSum1');
+        prebDecVal = prebDecVal;
+        if (prebDecVal != "" && prebDecVal != 0 && prebDecVal != "0") {
+            intPt = parseInt(input2.value) - prebDecVal;
+            input2.value = intPt;
+        }
+
+        if (input1 == "0" || input1 == "" || input1 == 0) {
+            input1 = 0;
+            prebDecVal = input1;
+        }
+
+        else if (input1 != "0" && input1 != "" && input1 != 0) {
+            input1 = parseInt(input1);
+            prebDecVal = input1;
+        }
+
+        if (input2.value == "" && input2.value == "0" && input2.value == 0) {
+            input2.value = 0;
+        } else if (input2.value != "" || input2.value != "0" || input2.value != 0) {
+            input2.value = parseInt(input2.value);
+            input2.value = parseInt(input2.value) + parseInt(input1);
+        }
+    }
+    //
+    //MyJan
+    function myChangeFunctionJan2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #january22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#january22 #january2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#january22 #january2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + feb1 + mar1 + apr1 + mays1 + june1 + july1 + augst1 + sept1 + oct1 + nov1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            } else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + feb + mar + apr + mays + june + july + augst + sept + oct + nov + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+
+            inputPrevJan3 = dd1;
+
+        });
+    }
+    function myChangeFunctionFeb2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #february22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#february22 #february2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#february22 #february2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + mar1 + apr1 + mays1 + june1 + july1 + augst1 + sept1 + oct1 + nov1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            } else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                // var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + mar + apr + mays + june + july + augst + sept + oct + nov + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+
+            inputPrevJan3 = dd1;
+
+        });
+    }
+    function myChangeFunctionMar2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #march22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#march22 #march2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#march22 #march2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                // var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + feb1 + apr1 + mays1 + june1 + july1 + augst1 + sept1 + oct1 + nov1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            } else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                //var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + feb + apr + mays + june + july + augst + sept + oct + nov + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+
+            inputPrevJan3 = dd1;
+
+        });
+    }
+
+    function myChangeFunctionAprl2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #april22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#april22 #april2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#april22 #april2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                //  var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + feb1 + mar1 + mays1 + june1 + july1 + augst1 + sept1 + oct1 + nov1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            } else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                // var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + feb + mar + mays + june + july + augst + sept + oct + nov + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+
+            inputPrevJan3 = dd1;
+
+        });
+    }
+
+    function myChangeFunctionMay2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #may22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#may22 #may2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#may22 #may2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                // var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + feb1 + mar1 + apr1 + june1 + july1 + augst1 + sept1 + oct1 + nov1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            } else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                // var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + feb + mar + apr + june + july + augst + sept + oct + nov + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+            inputPrevJan3 = dd1;
+        });
+    }
+
+    function myChangeFunctionJune2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #june22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#june22 #june2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#june22 #june2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                // var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + feb1 + mar1 + apr1 + mays1 + july1 + augst1 + sept1 + oct1 + nov1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                // var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + feb + mar + apr + mays + july + augst + sept + oct + nov + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+            inputPrevJan3 = dd1;
+        });
+    }
+
+    function myChangeFunctionJuly2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #july22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#july22 #july2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#july22 #july2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                // var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + feb1 + mar1 + apr1 + mays1 + june1 + augst1 + sept1 + oct1 + nov1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                // var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + feb + mar + apr + mays + june + augst + sept + oct + nov + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+            inputPrevJan3 = dd1;
+        });
+    }
+
+    function myChangeFunctionAugst2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #august22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#august22 #august2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#august22 #august2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                //var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + feb1 + mar1 + apr1 + mays1 + june1 + july1 + sept1 + oct1 + nov1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                // var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + feb + mar + apr + mays + june + july + sept + oct + nov + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+            inputPrevJan3 = dd1;
+        });
+    }
+
+    function myChangeFunctionSept2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #september22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#september22 #september2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#september22 #september2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                // var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + feb1 + mar1 + apr1 + mays1 + june1 + july1 + augst1 + oct1 + nov1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                //var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + feb + mar + apr + mays + june + july + augst + oct + nov + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+            inputPrevJan3 = dd1;
+        });
+    }
+
+    function myChangeFunctionOct2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #october22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#october22 #october2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#october22 #october2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                //var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + feb1 + mar1 + apr1 + mays1 + june1 + july1 + augst1 + sept1 + nov1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                // var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + feb + mar + apr + mays + june + july + augst + sept + nov + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+            inputPrevJan3 = dd1;
+        });
+    }
+
+    function myChangeFunctionNov2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #november22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#november22 #november2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#november22 #november2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                //  var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + feb1 + mar1 + apr1 + mays1 + june1 + july1 + augst1 + sept1 + oct1 + dec1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                //  var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + feb + mar + apr + mays + june + july + augst + sept + oct + dec;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+            inputPrevJan3 = dd1;
+        });
+    }
+
+    function myChangeFunctionDec2(input1) {
+        var intPt2 = 0;
+        var input2 = 0;
+        var inputPrevJan3 = 0;
+        $("body").on("change", "#tbl #december22", function () {
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            var dd1 = $.trim($(this).closest("tr").find("#december22 #december2").text(input1));
+            dd1 = $.trim($(this).closest("tr").find("#december22 #december2").text());
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(dd1));
+            input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+            if (inputPrevJan3 != "" && inputPrevJan3 != 0 && inputPrevJan3 != "0") {
+                intPt2 = parseInt(input2) - inputPrevJan3;
+                input2 = intPt2;
+
+                input2 += input2;
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            if (input1 == "0" || input1 == "" || input1 == 0) {
+                input1 = 0;
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan1 = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb1 = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar1 = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr1 = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays1 = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june1 = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july1 = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst1 = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept1 = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct1 = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov1 = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                //   var dec1 = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan1 + feb1 + mar1 + apr1 + mays1 + june1 + july1 + augst1 + sept1 + oct1 + nov1;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+            }
+            else if (input1 != "0" && input1 != "" && input1 != 0) {
+                input1 = parseInt(input1);
+                inputPrevJan3 = input1;
+                //new
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+
+                var jan = parseInt($.trim($(this).closest("tr").find("#january22 #january2").val()));
+                var feb = parseInt($.trim($(this).closest("tr").find("#february22 #february2").val()));
+                var mar = parseInt($.trim($(this).closest("tr").find("#march22 #march2").val()));
+                var apr = parseInt($.trim($(this).closest("tr").find("#april22 #april2").val()));
+                var mays = parseInt($.trim($(this).closest("tr").find("#may22 #may2").val()));
+                var june = parseInt($.trim($(this).closest("tr").find("#june22 #june2").val()));
+                var july = parseInt($.trim($(this).closest("tr").find("#july22 #july2").val()));
+                var augst = parseInt($.trim($(this).closest("tr").find("#august22 #august2").val()));
+                var sept = parseInt($.trim($(this).closest("tr").find("#september22 #september2").val()));
+                var oct = parseInt($.trim($(this).closest("tr").find("#october22 #october2").val()));
+                var nov = parseInt($.trim($(this).closest("tr").find("#november22 #november2").val()));
+                // var dec = parseInt($.trim($(this).closest("tr").find("#december22 #december2").val()));
+
+                input2 = input1 + jan + feb + mar + apr + mays + june + july + augst + sept + oct + nov;
+
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text(input2));
+                input2 = $.trim($(this).closest("tr").find('td:eq(24)').text());
+                //
+            }
+            inputPrevJan3 = dd1;
+        });
+    }
+
+    //btnClose
+    $('.btnClose').on('click', function (e) {
+
+        $('#launchDate').val("");
+        $("#plcVal1 :selected").val("SELECT");
+        $("#plcVal :selected").val("SELECT");
+        $("#brandName :selected").val("SELECT");
+        $("#fSegmentVal :selected").val("SELECT");
+
+        $("#plcVal1 :selected").text("SELECT");
+        $("#plcVal :selected").text("SELECT");
+        $("#brandName :selected").text("SELECT");
+        $("#fSegmentVal :selected").text("SELECT");
+
+        $('#display').val("");
+        $('#battery').val("");
+        $('#ramVal').val("");
+        $('#romVal').val("");
+        $('#fobVal').val("");
+        $('#fobVal1').val("");
+
+        $('#january').val("");
+        $('#february').val("");
+        $('#march').val("");
+        $('#april').val("");
+        $('#may').val("");
+        $('#june').val("");
+        $('#july').val("");
+        $('#august').val("");
+        $('#september').val("");
+        $('#october').val("");
+        $('#november').val("");
+        $('#december').val("");
+        //
+        $('#january1').val("");
+        $('#february1').val("");
+        $('#march1').val("");
+        $('#april1').val("");
+        $('#may1').val("");
+        $('#june1').val("");
+        $('#july1').val("");
+        $('#august1').val("");
+        $('#september1').val("");
+        $('#october1').val("");
+        $('#november1').val("");
+        $('#december1').val("");
+    });
+
+    //
+    var newChk = false;
+    if ($("#newOrdersChk").is(':checked')) {
+        $("#newOrdersChk").attr('value', 'true');
+        $("#newOrdersChk").prop("checked", true);
+
+    } else {
+        $("#newOrdersChk").attr('value', 'false');
+        $("#newOrdersChk").prop("checked", false);
+        newChk = $('#newOrdersChk').val();
+    }
+
+    if (newChk == "false") {
+        $("#newOrdersChk").attr('value', 'false');
+        $("#newOrdersChk").prop("checked", false);
+
+        $("#newOrders").hide();
+        $("#repeatOrders").show();
+        newChk = $('#newOrdersChk').val();
+    } else {
+        $("#newOrdersChk").attr('value', 'true');
+        $("#newOrdersChk").prop("checked", true);
+
+        $("#newOrders").show();
+        $("#repeatOrders").hide();
+    }
+    $(function () {
+        $('#launchDate').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            //startDate: today,
+            //endDate: 0
+        });
+        $('#launchDate1').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            //startDate: today,
+            //endDate: 0
+        });
+        $('.launchDate2').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            //startDate: today,
+            //endDate: 0
+        });
+        $("#newOrdersChk").on('change', function () {
+            if ($(this).is(':checked')) {
+                $(this).attr('value', 'true');
+
+                $("#newOrders").show();
+                $("#repeatOrders").hide();
+            } else {
+                $("#newOrders").hide();
+                $("#repeatOrders").show();
+                newChk = $('#newOrdersChk').val();
+            }
+        });
+
+        $('.btn2').on('click', function (e) {
+            var proName = $('#proName').val();
+            if (proName == "") {
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please must input Project Name.",
+                }).show();
+                return false;
+            }
+            $('#draggable').modal();
+            $('#ProjectName').val(proName);
+        });
+        var proName1;
+        var proIds1;
+        $('.btn1').on('click', function (e) {
+            //debugger;
+            //var proName =$("#proName :selected").text();
+            //var proIds = $("#proName :selected").val();
+            proName1 = $("#dropForProject :selected").text();
+            proIds1 = $("#dropForProject :selected").val();
+            if (proName1 == "SELECT PROJECT") {
+
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please must input Project Name.",
+                }).show();
+                return false;
+            }
+            $('#draggable1').modal();
+            $('#ProjectName1').val(proName1);
+            $('#ProjectMasterId1').val(proIds1);
+
+            $.ajax({
+                url: '@Url.Action("GetProjectInfoForForecasting", "Commercial")',//'/ProjectManager/GetPoProject',
+                type: "GET",
+                dataType: "JSON",
+                data: { proIds: proIds1 },
+                success: function (data) {
+                    debugger;
+                    console.log(data);
+                    var items = $.parseJSON(data);
+                    $.each(items, function (index, obj) {
+                        var newDate = new Date(obj.ReleaseDate);
+                        var releaseDate = "";
+                        if (obj.ReleaseDate != null) {
+                            releaseDate = moment(obj.ReleaseDate).format('YYYY-MM-DD');
+                        } else {
+                            releaseDate = "";
+                        }
+                        var brandName1 = obj.Brand;
+                        var fSegmentVal1 = obj.FSegment;
+                        var display1 = obj.Display;
+                        var battery1 = obj.Battery;
+                        var ramVal1 = obj.Ram;
+                        var romVal1 = obj.Rom;
+
+
+                        $('#brandName1').val(brandName1);
+                        $('#fSegmentVal1').val(fSegmentVal1);
+                        $('#display1').val(display1);
+                        $('#battery1').val(battery1);
+                        $('#ramVal1').val(ramVal1);
+                        $('#romVal1').val(romVal1);
+
+                        $('#launchDate1').val(releaseDate);
+                    });
+                }
+            });
+        });
+        //btnModalSave1
+        $('#btnModalSave1').on('click', function (e) {
+            $('#loading').show();
+            var projectMasterId = $('#ProjectMasterId1').val();
+            var projectName = $('#ProjectName1').val();
+            var launchDate = $('#launchDate1').val();
+            var plcVal = $("#plcVal1 :selected").text();
+            //var plcVal2 = $("#plcVal").find("option:selected").text();
+            var brandName = $('#brandName1').val();
+            var fSegmentVal = $('#fSegmentVal1').val();
+            var display = $('#display1').val();
+            var battery = $('#battery1').val();
+            var ramVal = $('#ramVal1').val();
+            var romVal = $('#romVal1').val();
+            var fobVal = $('#fobVal1').val();
+
+            var january = $('#january1').val();
+            var february = $('#february1').val();
+            var march = $('#march1').val();
+            var april = $('#april1').val();
+            var may = $('#may1').val();
+            var june = $('#june1').val();
+            var july = $('#july1').val();
+            var august = $('#august1').val();
+            var september = $('#september1').val();
+            var october = $('#october1').val();
+            var november = $('#november1').val();
+            var december = $('#december1').val();
+
+            var obj = {};
+            var objArr = [];
+
+            obj.ProjectMasterId = projectMasterId;
+            obj.ProjectName = projectName;
+            obj.LaunchDate = launchDate;
+            obj.Plc = plcVal;
+            obj.Brand = brandName;
+            obj.FSegment = fSegmentVal;
+            obj.Display = display;
+            obj.Battery = battery;
+            obj.Ram = ramVal;
+            obj.Rom = romVal;
+            obj.Fob = fobVal;
+
+            obj.January = january;
+            obj.February = february;
+            obj.March = march;
+            obj.April = april;
+            obj.May = may;
+            obj.June = june;
+            obj.July = july;
+            obj.August = august;
+            obj.September = september;
+            obj.October = october;
+            obj.November = november;
+            obj.December = december;
+
+            objArr.push(obj);
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveProjectForecastingData", "Commercial")',
+                data: "{objArr:'" + JSON.stringify(objArr) + "'}",
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                //async: false,
+                success: function (data) {
+                    debugger;
+                    console.log("data :" + data);
+                    if (data.data == "OK") {
+                        alertify.dialog('alert').set({
+                            'title': '   ',
+                            'transition': 'zoom',
+                            'message': "Data saved successfully",
+                        }).show();
+
+                        window.location = '@Url.Action("ProjectForecasting", "Commercial")';
+                        window.location.reload(true);
+                        $('#loading').hide();
+                    }
+                }
+            });
+            $('#draggable1').modal('hide');
+        });//end btn
+        $('#btnModalSave').on('click', function (e) {
+            $('#loading').show();
+            var projectName = $('#ProjectName').val();
+            var launchDate = $('#launchDate').val();
+            var plcVal = $("#plcVal :selected").text();
+            //var plcVal2 = $("#plcVal").find("option:selected").text();
+            var brandName = $('#brandName').val();
+            var fSegmentVal = $('#fSegmentVal').val();
+            var display = $('#display').val();
+            var battery = $('#battery').val();
+            var ramVal = $('#ramVal').val();
+            var romVal = $('#romVal').val();
+            var fobVal = $('#fobVal').val();
+
+            var january = $('#january').val();
+            var february = $('#february').val();
+            var march = $('#march').val();
+            var april = $('#april').val();
+            var may = $('#may').val();
+            var june = $('#june').val();
+            var july = $('#july').val();
+            var august = $('#august').val();
+            var september = $('#september').val();
+            var october = $('#october').val();
+            var november = $('#november').val();
+            var december = $('#december').val();
+
+            var obj = {};
+            var objArr = [];
+
+            // obj.ProjectName = projectName;
+            obj.ProjectMasterId = 0;
+            obj.ProjectName = projectName;
+            obj.LaunchDate = launchDate;
+            obj.Plc = plcVal;
+            obj.Brand = brandName;
+            obj.FSegment = fSegmentVal;
+            obj.Display = display;
+            obj.Battery = battery;
+            obj.Ram = ramVal;
+            obj.Rom = romVal;
+            obj.Fob = fobVal;
+
+            obj.January = january;
+            obj.February = february;
+            obj.March = march;
+            obj.April = april;
+            obj.May = may;
+            obj.June = june;
+            obj.July = july;
+            obj.August = august;
+            obj.September = september;
+            obj.October = october;
+            obj.November = november;
+            obj.December = december;
+
+            objArr.push(obj);
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveProjectForecastingData", "Commercial")',
+                data: "{objArr:'" + JSON.stringify(objArr) + "'}",
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                //async: false,
+                success: function (data) {
+                    debugger;
+                    console.log("data :" + data);
+                    if (data.data == "OK") {
+                        alertify.dialog('alert').set({
+                            'title': '   ',
+                            'transition': 'zoom',
+                            'message': "Data saved successfully",
+                        }).show();
+
+                        window.location = '@Url.Action("ProjectForecasting", "Commercial")';
+                        window.location.reload(true);
+                        $('#loading').hide();
+                    }
+                }
+            });
+            $('#draggable').modal('hide');
+                        @*$.ajax({
+                type: 'POST',
+                url: '@Url.Action("ProjectForecasting", "Commercial")',
+                data: "{ projectName: '" + projectName
+                    + "', launchDate: '" + launchDate
+                    + "', plcVal: '" + plcVal
+                    + "', brandName: '" + brandName
+                    + "', fSegmentVal: '" + fSegmentVal
+                    + "', display: '" + display
+                    + "', battery: '" + battery
+                    + "', ramVal: '" + ramVal
+                    + "', romVal: '" + romVal
+                    + "', romVal: '" + romVal
+
+                   + "', january: '" + january
+                   + "', february: '" + february
+                   + "', march: '" + march
+                   + "', april: '" + april
+                   + "', may: '" + may
+                   + "', june: '" + june
+                   + "', july: '" + july
+                   + "', august: '" + august
+                   + "', september: '" + september
+                   + "', october: '" + october
+                   + "', november: '" + november
+                   + "', december: '" + december
+
+                    + "'}",
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                async: false,
+                success: function (data) {
+                    if (!data.success) {
+                        if (data.errors.name) {
+                            //  $('.throw_error').fadeIn(1000).html(data.errors.name);
+                        }
+                    }
+                    else {
+                        //  $('#success').fadeIn(1000).append('<p>' + data.posted + '</p>');
+                    }
+                }
+            });//*@
+        });//end btn
+
+        // $("body").on("click", "#tbl22 #saveBtns", function () {
+        $("body").on("click", "#tbl #btnUpdate", function () {
+            $('#loading').show();
+            var obj = {};
+            var objArr = [];
+            var rowIndex = $(this).closest('tr').index() + 1;
+            var table = document.getElementById('tbl');
+            var row = $(this).closest("tr");
+            debugger;
+            var proIds = $.trim(table.rows[rowIndex].cells[0].innerHTML);
+            var projectName = $.trim(table.rows[rowIndex].cells[1].innerHTML);
+            var proType = $.trim(table.rows[rowIndex].cells[2].innerHTML);
+            var launchDate = "";
+            var brand = "";
+            var display = "";
+            var battery = "";
+            var ram = "";
+            var rom = "";
+
+            if (proIds != "0") {
+                launchDate = $.trim(table.rows[rowIndex].cells[3].innerHTML);
+                brand = $.trim(table.rows[rowIndex].cells[5].innerHTML);
+                display = $.trim(table.rows[rowIndex].cells[7].innerHTML);
+                battery = $.trim(table.rows[rowIndex].cells[8].innerHTML);
+                ram = $.trim(table.rows[rowIndex].cells[9].innerHTML);
+                rom = $.trim(table.rows[rowIndex].cells[10].innerHTML);
+            } else if (proIds == "0") {
+                launchDate = $(this).closest('tr').find('.launchDate2').val();
+                brand = $(this).closest('tr').find('.brandName2 option:selected').text();
+                display = $(this).closest('tr').find('.display2').val();
+                battery = $(this).closest('tr').find('.battery2').val();
+                ram = $(this).closest('tr').find('.ramVal2').val();
+                rom = $(this).closest('tr').find('.romVal2').val();
+            }
+            if (brand == "SELECT") {
+                brand = "";
+            }
+            var plc = $(this).closest('tr').find('.plcVal2 option:selected').text();
+            var fSegment = $(this).closest('tr').find('.fSegmentVal2 option:selected').text();
+            if (plc == "SELECT") {
+                plc = "";
+            }
+            if (fSegment == "SELECT") {
+                fSegment = "";
+            }
+            var fob = $(this).closest('tr').find('.fobVal2').val();
+
+            var jan = $(this).closest('tr').find('.january2').val();
+            var feb = $(this).closest('tr').find('.february2').val();
+            var mar = $(this).closest('tr').find('.march2').val();
+            var aprl = $(this).closest('tr').find('.april2').val();
+            var mays = $(this).closest('tr').find('.may2').val();
+            var june = $(this).closest('tr').find('.june2').val();
+            var july = $(this).closest('tr').find('.july2').val();
+            var augst = $(this).closest('tr').find('.august2').val();
+            var sept = $(this).closest('tr').find('.september2').val();
+            var oct = $(this).closest('tr').find('.october2').val();
+            var nov = $(this).closest('tr').find('.november2').val();
+            var dec = $(this).closest('tr').find('.december2').val();
+
+            var ids = $.trim(table.rows[rowIndex].cells[30].innerHTML);
+
+            obj.Id = ids;
+            obj.ProjectMasterId = proIds;
+            obj.ProjectName = projectName;
+            obj.ProjectType = proType;
+            obj.LaunchDate = launchDate;
+            obj.Plc = plc;
+            obj.Brand = brand;
+            obj.Display = display;
+            obj.Battery = battery;
+            obj.Ram = ram;
+            obj.Rom = rom;
+            obj.FSegment = fSegment;
+            obj.Fob = fob;
+
+            obj.January = jan;
+            obj.February = feb;
+            obj.March = mar;
+            obj.April = aprl;
+            obj.May = mays;
+            obj.June = june;
+            obj.July = july;
+            obj.August = augst;
+            obj.September = sept;
+            obj.October = oct;
+            obj.November = nov;
+            obj.December = dec;
+            obj.IsActive = true;
+
+            objArr.push(obj);
+            
+            alertify.confirm('Confirm message', 'Do you want to update this data?', function () {
+                $('#loading').show();
+                alertify.success('Ok');
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("UpdateProjectForecastingData", "Commercial")',
+                    data: "{objArr:'" + JSON.stringify(objArr) + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    success: function (data) {
+                        debugger;
+                        console.log("data :" + data);
+                        if (data.data == "OK") {
+                            alertify.dialog('alert').set({
+                                'title': '   ',
+                                'transition': 'zoom',
+                                'message': "Data saved successfully",
+                            }).show();
+
+                            window.location = '@Url.Action("ProjectForecasting", "Commercial")';
+                            window.location.reload(true);
+                            $('#loading').hide();
+                        }
+                    }
+                });//
+
+            }, function () {
+                alertify.error('Cancel');
+                $('#loading').hide();
+            });
+        });
+        $("body").on("click", "#tbl #btnDelete", function () {
+            $('#loading').show();
+            var obj = {};
+            var objArr = [];
+            var rowIndex = $(this).closest('tr').index() + 1;
+            var table = document.getElementById('tbl');
+            var row = $(this).closest("tr");
+            debugger;
+            var ids = $.trim(table.rows[rowIndex].cells[30].innerHTML);
+            obj.Id = ids;
+            obj.IsActive = false;
+            objArr.push(obj);
+
+
+            alertify.confirm('Confirm message', 'Do you want to delete this data?', function () {
+                $('#loading').show();
+                alertify.success('Ok');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("DeleteProjectForecastingData", "Commercial")',
+                    data: "{objArr:'" + JSON.stringify(objArr) + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    success: function (data) {
+                        debugger;
+                        console.log("data :" + data);
+                        if (data.data == "OK") {
+                            alertify.dialog('alert').set({
+                                'title': '   ',
+                                'transition': 'zoom',
+                                'message': "Data deleted successfully",
+                            }).show();
+
+                            window.location = '@Url.Action("ProjectForecasting", "Commercial")';
+                            window.location.reload(true);
+                            $('#loading').hide();
+                        }
+                    }
+                });//
+
+                //$('#form1').trigger('submit');
+                //$('#loading').hide();
+            }, function () {
+                alertify.error('Cancel');
+                $('#loading').hide();
+            });
+
+
+        });//
+        //
+
+        var tdtblSam2 = $('#tbl').DataTable({
+            scrollY: "400px",
+            scrollX: true,
+            scrollCollapse: true,
+            paging: false,
+            "order": [[30, "desc"]]
+            //fixedColumns: {
+            //    leftColumns: 2
+            //}
+        });
+        //var tdtblSam3 = $('#tbl2').DataTable({
+        //    scrollY: true,
+        //    scrollX: true,
+        //    scrollCollapse: true,
+        //    paging: false,
+        //    //fixedColumns: {
+        //    //    leftColumns: 2
+        //    //}
+        //});
+
+    });
+    $(document).on('submit', 'form', function () {
+        var buttons = $(this).find('[type="submit"]');
+        if ($(this).valid()) {
+            buttons.each(function (btn) {
+                $(buttons[btn]).prop('disabled', true);
+            });
+        } else {
+            buttons.each(function (btn) {
+                $(buttons[btn]).prop('disabled', false);
+            });
+        }
+    });
+</script>

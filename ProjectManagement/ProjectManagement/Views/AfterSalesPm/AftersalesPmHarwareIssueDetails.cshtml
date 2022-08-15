@@ -1,0 +1,235 @@
+﻿@using System.Web.Mvc.Html
+@using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical
+@using ProjectManagement.Infrastructures.Helper
+@using ProjectManagement.Models
+@model ProjectManagement.ViewModels.AftersalesPm.VmIssueVerification
+
+@*<h2>AftersalesPmHarwareIssueDetails</h2>*@
+
+
+<div class="row" style="background: gray; padding: 15px;">
+    <div class="col-lg-12">
+        <!-- BEGIN VALIDATION STATES-->
+        <div class="portlet light portlet-fit portlet-form bordered">
+            <div class="portlet-body" style="padding: 15px;">
+                <h6 style="text-align: center; font-weight: bold; color: hotpink; text-decoration: underline; font-size: 30px">Log Details </h6>
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl2" id="tbl2">
+                        <thead style="background-color:hotpink; color: black;">
+                            <tr>
+                                <th>#</th>
+                                <th style="display: none">Id</th>
+                                <th style="display: none">MainId</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">StartDate</th>
+                                <th class="text-center">EndDate</th>
+                                <th class="text-center">DateDiffs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.AftersalesPm_HwIssueVerificationLogModels.Any())
+                            {
+                                for (int i = 0; i < Model.AftersalesPm_HwIssueVerificationLogModels.Count; i++)
+                                {
+                                    <tr class="trClsforSize">
+                                        <td></td>
+                                        <td class="text-center" style="display: none">@Model.AftersalesPm_HwIssueVerificationLogModels[i].Id</td>
+                                        <td class="text-center" style="display: none">@Model.AftersalesPm_HwIssueVerificationLogModels[i].MainId</td>
+                                        <td class="text-center" style="">@Model.AftersalesPm_HwIssueVerificationLogModels[i].Status</td>
+                                        <td class="text-center" style="">
+                                            @String.Format("{0:yyyy-MM-dd}", @Model.AftersalesPm_HwIssueVerificationLogModels[i].StartDate)
+                                        </td>
+                                        <td class="text-center" style="">
+                                            @String.Format("{0:yyyy-MM-dd}", @Model.AftersalesPm_HwIssueVerificationLogModels[i].EndDate)
+                                        </td>
+                                        <td class="text-center" style="">
+                                            @Model.AftersalesPm_HwIssueVerificationLogModels[i].DateDiffs
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br/><br/>
+            <div class="portlet-body" style="padding: 15px;">
+                <h6 style="text-align: center;font-weight: bold;color:saddlebrown;text-decoration: underline;font-size: 30px">Requirement Details </h6>
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl1" id="tbl1">
+                        <thead style="background-color:lightsteelblue; color: black;">
+                            <tr>
+                                <th>#</th>
+                                <th style="display: none">Id</th>
+                                <th style="display: none">MainId</th>
+                                <th class="text-center">Requirement Details</th>
+                                <th class="text-center">Forward Reason</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Added Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.AftersalesPm_HwIssuePlaceRequirements.Any())
+                            {
+                                for (int i = 0; i < Model.AftersalesPm_HwIssuePlaceRequirements.Count; i++)
+                                {
+                                    <tr class="trClsforSize">
+                                        <td></td>
+                                        <td class="text-center" style="display: none">@Model.AftersalesPm_HwIssuePlaceRequirements[i].Id</td>
+                                        <td class="text-center" style="display: none">@Model.AftersalesPm_HwIssuePlaceRequirements[i].MainId</td>
+                                        <td class="text-center" style="">@Model.AftersalesPm_HwIssuePlaceRequirements[i].RequirementDetails</td>
+                                        <td class="text-center" style="">@Model.AftersalesPm_HwIssuePlaceRequirements[i].ForwardReason</td>
+                                        <td class="text-center" style="">
+
+                                            @if (@Model.AftersalesPm_HwIssuePlaceRequirements[i].ReqStatus == "RequirementPlaced")
+                                            {
+                                                <p style="color:green;font-weight: bold">@Model.AftersalesPm_HwIssuePlaceRequirements[i].ReqStatus</p>
+                                            }
+                                            else if (@Model.AftersalesPm_HwIssuePlaceRequirements[i].ReqStatus == "RequirementForwarded")
+                                            {
+                                                <p style="color: blue; font-weight: bold">@Model.AftersalesPm_HwIssuePlaceRequirements[i].ReqStatus</p>
+                                            }
+                                            else if (@Model.AftersalesPm_HwIssuePlaceRequirements[i].ReqStatus == "RequirementAccepted")
+                                            {
+                                                <p style="color:indianred; font-weight: bold">@Model.AftersalesPm_HwIssuePlaceRequirements[i].ReqStatus</p>
+                                            }
+                                        </td>
+                                        <td class="text-center" style="">
+                                            @String.Format("{0:yyyy-MM-dd}", @Model.AftersalesPm_HwIssuePlaceRequirements[i].AddedDate)
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br /><br />
+            <div class="portlet-body" style="padding: 15px;">
+                <h6 style="text-align: center; font-weight: bold; color:mediumblue; text-decoration: underline; font-size: 30px">Shared Report Details </h6>
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl4" id="tbl4">
+                        <thead style="background-color:lightskyblue; color: black;">
+                            <tr>
+                                <th>#</th>
+                                <th style="display: none">Id</th>
+                                <th style="display: none">MainId</th>
+                                <th class="text-center"> Details<br /> of Report</th>
+                                <th class="text-center">Instruction<br /> for<br /> Service</th>
+                                <th class="text-center">Instruction<br /> for<br /> Production</th>
+                                <th class="text-center">Future Plan<br /> for Next <br />Products</th>
+                                <th class="text-center">Forward<br /> Reason</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Added Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.AftersalesPm_HwIssueReportShareModels.Any())
+                            {
+                                for (int i = 0; i < Model.AftersalesPm_HwIssueReportShareModels.Count; i++)
+                                {
+                                    <tr class="trClsforSize">
+                                        <td></td>
+                                        <td class="text-center" style="display: none">@Model.AftersalesPm_HwIssueReportShareModels[i].Id</td>
+                                        <td class="text-center" style="display: none">@Model.AftersalesPm_HwIssueReportShareModels[i].MainId</td>
+                                        <td class="text-center" style="">@Model.AftersalesPm_HwIssueReportShareModels[i].ReportDetails</td>
+                                        <td class="text-center" style="">@Model.AftersalesPm_HwIssueReportShareModels[i].InstructionService</td>
+                                        <td class="text-center" style="">@Model.AftersalesPm_HwIssueReportShareModels[i].InstructionProduction</td>
+                                        <td class="text-center" style="">@Model.AftersalesPm_HwIssueReportShareModels[i].FuturePlanForNxtPro</td>
+                                        <td class="text-center" style="">@Model.AftersalesPm_HwIssueReportShareModels[i].ForwardReason</td>
+                                        <td class="text-center" style="">
+                                            @if (@Model.AftersalesPm_HwIssueReportShareModels[i].Status == "ReportShared")
+                                            {
+                                                <p style="color:yellowgreen;font-weight: bold">@Model.AftersalesPm_HwIssueReportShareModels[i].Status</p>
+                                            }
+                                            else if (@Model.AftersalesPm_HwIssueReportShareModels[i].Status == "ReportForwarded")
+                                            {
+                                                <p style="color: blue; font-weight: bold">@Model.AftersalesPm_HwIssueReportShareModels[i].Status</p>
+                                            }
+                                            else if (@Model.AftersalesPm_HwIssueReportShareModels[i].Status == "ReportAccepted")
+                                            {
+                                                <p style="color: green; font-weight: bold">@Model.AftersalesPm_HwIssueReportShareModels[i].Status</p>
+                                            }
+                                        </td>
+                                        <td class="text-center" style="">
+                                            @String.Format("{0:yyyy-MM-dd}", @Model.AftersalesPm_HwIssueReportShareModels[i].AddedDate)
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <!-- END VALIDATION STATES-->
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("body:first").addClass("page-sidebar-closed");
+        $("ul.page-sidebar-menu").addClass("page-sidebar-menu-closed");
+    });
+    $(document).ready(function () {
+        var t = $('#tbl1').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false
+        });
+        t.on('order.dt search.dt', function () {
+            t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+        
+        var t2 = $('#tbl2').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false
+        });
+        t2.on('order.dt search.dt', function () {
+            t2.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+        var t4 = $('#tbl4').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false
+        });
+        t4.on('order.dt search.dt', function () {
+            t4 .column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+    });
+    $(document).on('submit', 'form', function () {
+        var buttons = $(this).find('[type="submit"]');
+        if ($(this).valid()) {
+            buttons.each(function (btn) {
+                $(buttons[btn]).prop('disabled', true);
+            });
+        } else {
+            buttons.each(function (btn) {
+                $(buttons[btn]).prop('disabled', false);
+            });
+        }
+    });
+</script>

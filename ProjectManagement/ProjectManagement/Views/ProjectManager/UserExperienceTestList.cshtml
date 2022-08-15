@@ -1,0 +1,187 @@
+﻿@*<h2>UserExperienceTestList</h2>*@
+@using System.Web.Mvc.Html
+@using ProjectManagement.Infrastructures.Helper
+@using ProjectManagement.Models
+@model ProjectManagement.ViewModels.ProjectManager.VmUserExperienceTest
+<style>
+    .page-header-fixed .page-container {
+        margin-top: 0px;
+    }
+
+    .navbar-fixed-top {
+        position: relative;
+    }
+
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 70px;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 999;
+        text-align: center;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="col-lg-12">
+                    <div class="caption font-dark">
+                        <i class="icon-settings font-dark"></i>
+                        <span class="caption-subject bold uppercase">  List of Projects from Project Manager</span>
+                    </div>
+                    <div class="tools"> </div>
+                </div>
+                <br /><br />
+                <div class="col-lg-12">
+                    <div class="col-lg-9">
+                        @*<p style="color:red;font-weight: bold" class="col-md-2">Welcome<h1 style="color:darkgoldenrod;font-weight: bold">@ViewBag.UserInfo.UserFullName !!</h1></p>*@
+                    </div>
+                    <div class="col-lg-3"></div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-bordered table-striped table-condensed flip-content tbl" id="tbl">
+                        <thead style="background-color: #C5E0B4; color: black;border: 1px solid black">
+                            <tr style="border: 1px solid black">
+                                <th style="border: 1px solid black">#</th>
+                                <th style="display: none;border: 1px solid black">SwQcHeadAssignId</th>
+                                <th style="display: none;border: 1px solid black">ProjectMasterId</th>
+                                <th style="border: 1px solid black">ProjectName</th>
+                                <th style="border: 1px solid black">Orders</th>
+                                <th style="border: 1px solid black">Project Type</th>
+                                <th style="border: 1px solid black">Software Name</th>
+                                <th style="border: 1px solid black">Software Version</th>
+                                <th style="border: 1px solid black">Pm_Name</th>
+                                <th style="border: 1px solid black">Pm_Assign<br />Comment</th>
+                                <th style="border: 1px solid black">Pm Assign Date</th>
+                                <th style="border: 1px solid black">Test Phase</th>
+                                <th style="border: 1px solid black;text-align: center">Details</th>
+                                <th style="border: 1px solid black;text-align: center;color: black;font-weight: bold">Mail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.PmQcAssignModels.Any())
+                            {
+
+                                for (int i = 0; i < Model.PmQcAssignModels.Count; i++)
+                                {
+                                    if (Model.PmQcAssignModels[i].SwQcHeadAssignId > 0)
+                                    {
+                                        <tr>
+                                            <td style="border: 1px solid black"></td>
+                                            <td style="display: none">@Model.PmQcAssignModels[i].ProjectMasterId</td>
+                                            <td class="SwQcHeadAssignId" id="SwQcHeadAssignId" style="display: none">@Model.PmQcAssignModels[i].SwQcHeadAssignId</td>
+                                            <td style="border: 1px solid black">@Model.PmQcAssignModels[i].ProjectName</td>
+                                            <td style="border: 1px solid black">@Model.PmQcAssignModels[i].OrderNuber</td>
+                                            <td style="border: 1px solid black">@Model.PmQcAssignModels[i].ProjectType</td>
+                                            <td style="border: 1px solid black">@Model.PmQcAssignModels[i].SoftwareVersionName</td>
+                                            <td style="border: 1px solid black">@Model.PmQcAssignModels[i].SoftwareVersionNo</td>
+                                            <td style="border: 1px solid black">@Model.PmQcAssignModels[i].ProjectManagerUserName</td>
+                                            <td style="border: 1px solid black">@Model.PmQcAssignModels[i].ProjectManagerAssignComment</td>
+                                            <td style="border: 1px solid black">
+
+                                                @if (@Model.PmQcAssignModels[i].PmToQcHeadAssignTime != null)
+                                                {@String.Format("{0:yyyy-MM-dd}", @Model.PmQcAssignModels[i].PmToQcHeadAssignTime)}
+                                            </td>
+                                            <td style="border: 1px solid black">@Model.PmQcAssignModels[i].TestPhaseName</td>
+                                            <td style="border: 1px solid black;text-align: center">
+                                                <a class="btn blue" target="_blank" href='@Url.Action("UserExperienceEntryPhase", "ProjectManager", new { swQcHeadIds = @Model.PmQcAssignModels[i].SwQcHeadAssignId, proName = @Model.PmQcAssignModels[i].ProjectName, proIds = @Model.PmQcAssignModels[i].ProjectMasterId })'>
+                                                    <span class="glyphicon glyphicon-list-alt"></span> Details
+                                                </a>
+                                            </td>
+                                            <td style="border: 1px solid black;text-align: center">
+                                                <input type="submit" id="btnforMail" class="btn sbold uppercase btn-outline red btnforMail" value="Send" />
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="loading" style="display: none;text-align: center;">
+    <img src="~/img/loading-spinner-grey.gif" />
+</div>
+<script type="text/javascript">
+    $(function() {
+        $("body:first").addClass("page-sidebar-closed");
+        $("ul.page-sidebar-menu").addClass("page-sidebar-menu-closed");
+    });
+    $(document).ready(function() {
+        //$('#singleOne').chosen({
+        //    disable_search_threshold: 10,
+        //    no_results_text: "Oops, nothing found!",
+        //    width: "95%"
+        //});
+        var t = $('#tbl').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "lengthMenu": [[5, 10, 20, 30, 50, -1], [5, 10, 20, 30, 50, "All"]],
+            "fixedHeader": {
+                header: true,
+                footer: true
+            }
+        });
+        t.on('order.dt search.dt', function() {
+            t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function(cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+
+        //
+
+        $('#tbl').on('click', '.btnforMail', function () {
+            $('#loading').show();
+            var rowIndex = $(this).closest('tr').index() + 1;
+            var table = document.getElementById('tbl');
+            var swQcHeadAssignId = $.trim(table.rows[rowIndex].cells[2].innerHTML);
+
+            var obj = {};
+            obj.swQcHeadAssignId = swQcHeadAssignId;
+
+            alertify.confirm('Confirm message', 'Do you want to send mail?', function() {
+                $.ajax({
+                    url: '@Url.Action("UserExperienceTestMail", "ProjectManager")',
+                    type: 'POST',
+                    data: JSON.stringify(obj),
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function(data) {
+                        console.log("data :" + data);
+
+                        if (data == "ok") {
+                            alertify.dialog('alert').set({
+                                'title': '   ',
+                                'transition': 'zoom',
+                                'message': "Mail submitted successfully.",
+                            }).show();
+                          
+                            @*window.location = '@Url.Action("UserExperienceTestList", "ProjectManager")';
+                            window.location.reload(true);*@
+                            $('#loading').hide();
+                        }
+                    }
+                });
+
+            }, function () {
+                alertify.error('Cancel');
+                $('#loading').hide();
+            });
+        });//end
+    });
+</script>

@@ -1,0 +1,128 @@
+﻿
+@{
+    ViewBag.Title = "RelevantModelPicker";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">Relevant Model Picker</div>
+    </div>
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        @Html.DropDownList("Project", (IEnumerable<SelectListItem>)ViewBag.variants,"Select", new { @class = "form-control ddChosen" })
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+                <hr/>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="note note-success text-center">
+                            <h3 class="bold"> SPECIFICATION </h3>
+                        </div>
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-striped table-condensed" id="tblSpec">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="note note-success text-center">
+                            <h3 class="bold"> ACCESSORIES PRICE </h3>
+                        </div>
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-striped table-condensed" id="tblAccPrice">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Accessory Name</th>
+                                        <th class="text-center">Vendor</th>
+                                        <th class="text-center">Price</th>
+                                        <th class="text-center">Currency</th>
+                                        <th class="text-center">Type</th>
+                                        <th class="text-center">Duty</th>
+                                        <th class="text-center">Total Price<br /><span style="font-size: xx-small">(Price+Duty)</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @*<tr>
+                                        <td class="text-center">@price.AccessoryName</td>
+                                        <td class="text-center">@price.Vendor</td>
+                                        <td class="text-center">@price.Price</td>
+                                        <td class="text-center">@price.Currency</td>
+                                        <td class="text-center">@price.Type</td>
+                                        <td class="text-center">@price.Duty</td>
+                                        <td class="text-center">@price.TotalPrice</td>
+                                    </tr>*@
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+                <div class="row">
+                    
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+</div>
+
+<script>
+    $('#Project').on('change', function () {
+        $('#tblSpec tbody').empty();
+        $('#tblAccPrice tbody').empty();
+        var projectId = $('#Project option:selected').val();
+        console.log(projectId);
+        var url = '@Url.Action("GetProjectInfoById", "Common")';
+        $.post(url, { projectId: projectId }, function(data) {
+            console.log(data);
+            var row = '<tr>'
+            + '<td class="text-center bold" style="color:firebrick"> Display & Resolution </td>'
+            + '<td class="text-center"> Size: ' + data.master.DisplaySize + ', Resolution: ' + data.master.DisplayResulution + ', Display Type: ' + data.master.DisplaySpeciality + ' </td>'
+            + '</tr>'
+            + '<tr>'
+            + '<td class="text-center bold" style="color:firebrick"> Camera </td>'
+            + '<td class="text-center"> Front Camera: ' + (data.master.FrontCamera == null ? data.master.FrontCam : data.master.FrontCamera) + ', Back Camera: ' + (data.master.BackCamera == null ? data.master.BackCam : data.master.BackCamera) + ' </td>'
+            + '</tr>'
+            + '<tr>'
+            + '<td class="text-center bold" style="color:firebrick"> Memory </td>'
+            + '<td class="text-center"> RAM: ' + data.master.Ram + ', ROM: ' + data.master.Rom + ' </td>'
+            + '</tr>'
+            + '<tr>'
+            + '<td class="text-center bold" style="color:firebrick"> Processor </td>'
+            + '<td class="text-center"> Chipset: ' + data.master.ChipsetName + ', CPU: ' + data.master.CpuName + ', Core: ' + data.master.ChipsetCore + ' </td>'
+            + '</tr>'
+            + '<tr>'
+            + '<td class="text-center bold" style="color:firebrick"> Battery </td>'
+            + '<td class="text-center"> Capacity: ' + data.master.BatteryRating + ', Type: ' + data.master.BatteryType + ' </td>'
+            + '</tr>'
+            + '<tr>'
+            + '<td class="text-center bold" style="color:firebrick"> OS </td>'
+            + '<td class="text-center"> OS: ' + data.master.OsName + ', Version: ' + data.master.OsVersion + ' </td>'
+            + '</tr>';
+            $('#tblSpec tbody').append(row);
+            row = '';
+            for (var i = 0; i < data.accessoriesPrice.length; i++) {
+            row = row+'<tr>'
+            + '<td class="text-center">' + data.accessoriesPrice[i].AccessoryName + '</td>'
+            + '<td class="text-center">' + data.accessoriesPrice[i].Vendor + '</td>'
+            + '<td class="text-center">' + data.accessoriesPrice[i].Price + '</td>'
+            + '<td class="text-center">' + data.accessoriesPrice[i].Currency + '</td>'
+            + '<td class="text-center">' + data.accessoriesPrice[i].Type + '</td>'
+            + '<td class="text-center">' + data.accessoriesPrice[i].Duty + '</td>'
+            + '<td class="text-center">' + data.accessoriesPrice[i].TotalPrice + '</td>'
+            + '</tr>';
+            }
+            console.log(row);
+            $('#tblAccPrice tbody').append(row);
+        });
+    });
+</script>
+

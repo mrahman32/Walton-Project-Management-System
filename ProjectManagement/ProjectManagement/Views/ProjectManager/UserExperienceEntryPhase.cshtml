@@ -1,0 +1,1138 @@
+﻿@*@{
+        ViewBag.Title = "UserExperienceEntryPhase";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    <h2>UserExperienceEntryPhase</h2>*@
+
+@using System.Web.Mvc.Html
+@using ProjectManagement.Infrastructures.Helper
+@using ProjectManagement.Models
+@model ProjectManagement.ViewModels.ProjectManager.VmUserExperienceTest
+
+<style>
+    .page-header-fixed .page-container {
+        margin-top: 0px;
+    }
+
+    .navbar-fixed-top {
+        position: relative;
+    }
+
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 70px;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 999;
+        text-align: center;
+    }
+
+    /*input[type=checkbox] {
+
+        -ms-transform: scale(2);
+        -moz-transform: scale(2);
+        -webkit-transform: scale(2);
+        -o-transform: scale(2);
+
+    }*/
+    /*input[type='checkbox'] {
+        width: 14px !important;
+        height: 14px !important;
+        margin: 5px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        outline: 1px solid gray;
+        box-shadow: none;
+        font-size: 0.8em;
+        text-align: center;
+        line-height: 1em;
+        background: red;
+    }
+
+        input[type='checkbox']:checked:after {
+            content: '✔';
+            color: white;
+        }*/
+    .AllowRating1 {
+        width: 20px !important;
+        height: 20px !important;
+        margin: 5px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        outline: 1px solid gray;
+        box-shadow: none;
+        font-size: 0.8em;
+        text-align: center;
+        line-height: 1em;
+        background: green;
+    }
+
+        .AllowRating1:checked:after {
+            content: '✔';
+            font-weight: bold;
+            color: white;
+        }
+
+    .AllowRating2 {
+        width: 20px !important;
+        height: 20px !important;
+        margin: 5px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        outline: 1px solid gray;
+        box-shadow: none;
+        font-size: 0.8em;
+        text-align: center;
+        line-height: 1em;
+        background: red;
+    }
+
+        .AllowRating2:checked:after {
+            content: '☓';
+            font-weight: bold;
+            color: white;
+        }
+    /*----------*/
+    .AllowRating3 {
+        width: 20px !important;
+        height: 20px !important;
+        margin: 5px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        outline: 1px solid gray;
+        box-shadow: none;
+        font-size: 0.8em;
+        text-align: center;
+        line-height: 1em;
+        background: green;
+    }
+
+        .AllowRating3:checked:after {
+            content: '✔';
+            font-weight: bold;
+            color: white;
+        }
+
+    .AllowRating4 {
+        width: 20px !important;
+        height: 20px !important;
+        margin: 5px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        outline: 1px solid gray;
+        box-shadow: none;
+        font-size: 0.8em;
+        text-align: center;
+        line-height: 1em;
+        background: red;
+    }
+
+        .AllowRating4:checked:after {
+            content: '☓';
+            font-weight: bold;
+            color: white;
+        }
+    /*----------*/
+    .AllowRating5 {
+        width: 20px !important;
+        height: 20px !important;
+        margin: 5px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        outline: 1px solid gray;
+        box-shadow: none;
+        font-size: 0.8em;
+        text-align: center;
+        line-height: 1em;
+        background: green;
+    }
+
+        .AllowRating5:checked:after {
+            content: '✔';
+            font-weight: bold;
+            color: white;
+        }
+
+    .AllowRating6 {
+        width: 20px !important;
+        height: 20px !important;
+        margin: 5px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        outline: 1px solid gray;
+        box-shadow: none;
+        font-size: 0.8em;
+        text-align: center;
+        line-height: 1em;
+        background: red;
+    }
+
+        .AllowRating6:checked:after {
+            content: '☓';
+            font-weight: bold;
+            color: white;
+        }
+</style>
+@using (@Html.BeginForm("UserExperienceEntryPhase", "ProjectManager", FormMethod.Post, new { enctype = "multipart/form-data", id = "form1" }))
+{
+    <div class="row">
+        <div class="col-md-12">
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+            <div class="portlet light bordered">
+                @*<div class="portlet-title">
+                        <div class="col-lg-12">
+                            <div class="caption font-dark">
+                                <i class="icon-settings font-dark"></i>
+                                <span class="caption-subject bold uppercase">  List of Projects from Project Manager</span>
+                            </div>
+                            <div class="tools"> </div>
+                        </div>
+                        <br /><br />
+                        <div class="col-lg-12">
+                            <div class="col-lg-9">
+
+                            </div>
+                            <div class="col-lg-3"></div>
+                        </div>
+                    </div>*@
+                <div class="portlet-body">
+                    <div class="table-scrollable table-responsive">
+                        <table class="table table-bordered table-striped table-condensed flip-content tbl" id="tbl">
+                            <thead style="background-color: #4a8099; color: white;">
+                                <tr style="background: #ED7D31; text-align: center"><th colspan="8" style="text-align: center; color: black">UX Report of <span style="color: white; font-weight: bold">@ViewBag.ProNames</span></th></tr>
+                                <tr style="background: #C5E0B4; text-align: center">
+                                    <th colspan="4" style="text-align: center; color: black; border: 1px solid black">Mandatory Making Part</th>
+                                    <th colspan="3" style="text-align: center; color: black; border: 1px solid black;">Issue Severity</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-left" style="display: none"> ProjectMasterId </th>
+                                    <th class="text-left" style="display: none"> SwQcHeadAssignId </th>
+                                    <th class="text-left" style="background: #FFE699; border: 1px solid black; color: black"> Options </th>
+                                    <th class="text-left" style="background: #FFE699; border: 1px solid black; color: black">Standard</th>
+                                    <th class="text-left" style="background: #FFE699; border: 1px solid black; color: black">Obtained</th>
+                                    <th class="text-left" style="background: #FFE699; border: 1px solid black; color: black">Remarks</th>
+                                    <th class="text-left" style="background: #FFE699; border: 1px solid black; color: black">Minor</th>
+                                    <th class="text-left" style="background: #FFE699; border: 1px solid black; color: black">Major</th>
+                                    <th class="text-left" style="background: #FFE699; border: 1px solid black; color: black">Critical</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.UxDetailsInfoModels.Any())
+                                {
+
+                                    for (int i = 0; i < Model.UxDetailsInfoModels.Count; i++)
+                                    {
+                                        if (Model.UxDetailsInfoModels[i].OptionId1 > 0)
+                                        {
+                                            <tr class="clsForObtains" id="clsForObtains">
+                                                <td style="display: none">
+                                                    @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].ProjectMasterId, new { @class = "form-control", id = "ProjectMasterId", value = "@ViewBag.ProIds", style = "text-align: center;width:120px" })
+                                                    @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].OptionId1, new { @class = "form-control", id = "OptionId1", style = "text-align: center;width:120px" })
+                                                    @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Id, new { @class = "form-control", id = "Ids", style = "text-align: center;width:120px" })
+                                                    @*<input type="text" value="@ViewBag.ProIds" />*@
+                                                </td>
+                                                <td style="display: none">
+                                                    @*<input type="text" value="@ViewBag.SwQcHeadAssignId" />*@
+                                                    @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].SwQcHeadAssignId, new { @class = "form-control", id = "SwQcHeadAssignId11", value = "@ViewBag.SwQcHeadAssignId", style = "text-align: center;width:120px" })
+                                                </td>
+                                                <td style="background: #E9EBF5">
+                                                    @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].ProjectName, new { @class = "form-control", id = "ProjectName", value = "  ViewBag.ProNames", style = "text-align: center;width:120px;display:none" })
+                                                    
+                                                    @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Options, new { @class = "form-control", @readonly = "readonly" })
+                                                </td>
+                                                <td style="background: #E9EBF5">
+                                                    @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].StandardPoint, new { @class = "form-control StandardPoint", @id = "StandardPoint", @readonly = "readonly" })
+                                                </td>
+                                                <td style="background: #E9EBF5">
+                                                     @*@Html.TextBoxFor(model => model.UxDetailsInfoModels[i].ObtainedPoint, new { @class = "form-control ObtainedPoint", @id = "ObtainedPoint", min = "0", type = "number", @onchange = "ObtainedValueFunc(this)" })*@
+                                                    @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].ObtainedPoint, new { @class = "form-control ObtainedPoint", @id = "ObtainedPoint", type = "text", @onkeypress = "return isNumberKey(event)", @onchange = "ObtainedValueFunc(this)" })
+                                                </td>
+                                                <td style="background: #E9EBF5">
+                                                    @*<input type="text" class="form-control" value="@Model.UxDetailsInfoModels[i].Remarks" />*@
+                                                    @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Remarks, new { @class = "form-control" })
+                                                </td>
+                                                <td style="text-align: center; background: #E9EBF5">
+                                                    @*<input type="text" class="form-control" value="@Model.UxDetailsInfoModels[i].Minor" />
+                                                        <input type="text" class="form-control" value="@Model.UxDetailsInfoModels[i].Minor" />*@
+
+                                                    @if (@Model.UxDetailsInfoModels[i].Minor == "Tick")
+                                                    {
+                                                        <div style="color: green; float: left">
+                                                            Tick  <span></span>
+                                                            @*<input id="AllowRating1" type="checkbox" value="@Model.UxDetailsInfoModels[i].Minor" class="AllowRating1" style="text-align: center; color: green;" checked />*@
+
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Minor1, new { @class = "AllowRating1", type = "checkbox", id = "AllowRating1", @Value = "true", @checked = "true" })
+                                                        </div>
+                                                        <div style="color: red; float: right">
+                                                            Cross  <span></span>
+                                                            @*<input id="AllowRating2" type="checkbox" class="AllowRating2 " value="@Model.UxDetailsInfoModels[i].Minor" style="text-align: center; color: red;" />*@
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Minor2, new { @class = "AllowRating2", type = "checkbox", id = "AllowRating2" })
+                                                        </div>
+                                                    }
+                                                    @if (@Model.UxDetailsInfoModels[i].Minor == "Cross")
+                                                    {
+                                                        <div style="color: green; float: left">
+                                                            Tick  <span></span>
+                                                            @*<input id="AllowRating1" type="checkbox" class="AllowRating1" value="@Model.UxDetailsInfoModels[i].Minor" style="text-align: center; color: green;" />*@
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Minor1, new { @class = "AllowRating1", type = "checkbox", id = "AllowRating1" })
+                                                        </div>
+                                                        <div style="color: red; float: right">
+                                                            Cross  <span></span>
+                                                            @*<input id="AllowRating2" type="checkbox" class="AllowRating2" value="@Model.UxDetailsInfoModels[i].Minor" style="text-align: center; color: red;" checked />*@
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Minor2, new { @class = "AllowRating2", type = "checkbox", id = "AllowRating2", @Value = "true", @checked = "true" })
+                                                        </div>
+
+                                                    }
+                                                    @if (@Model.UxDetailsInfoModels[i].Minor == null || @Model.UxDetailsInfoModels[i].Minor == "")
+                                                    {
+                                                        <div style="color: green; float: left">
+                                                            Tick  <span></span>
+                                                            @*<input id="AllowRating1" type="checkbox" value="@Model.UxDetailsInfoModels[i].Minor" class="AllowRating1" style="text-align: center; color: green;" />*@
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Minor1, new { @class = "AllowRating1", type = "checkbox", id = "AllowRating1" })
+                                                        </div>
+                                                        <div style="color: red; float: right">
+                                                            Cross  <span></span>
+                                                            @*<input id="AllowRating2" type="checkbox" value="@Model.UxDetailsInfoModels[i].Minor" class="AllowRating2" style="text-align: center; color: red;" />*@
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Minor2, new { @class = "AllowRating2", type = "checkbox", id = "AllowRating2" })
+                                                        </div>
+                                                    }
+                                                </td>
+                                                <td style="background: #E9EBF5">
+
+                                                    @if (@Model.UxDetailsInfoModels[i].Major == "Tick")
+                                                    {
+                                                        <div style="color: green; float: left">
+                                                            Tick  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Major1, new { @class = "AllowRating3", type = "checkbox", id = "AllowRating3", @Value = "true", @checked = "true" })
+                                                        </div>
+                                                        <div style="color: red; float: right">
+                                                            Cross  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Major2, new { @class = "AllowRating4", type = "checkbox", id = "AllowRating4" })
+                                                        </div>
+                                                    }
+                                                    @if (@Model.UxDetailsInfoModels[i].Major == "Cross")
+                                                    {
+                                                        <div style="color: green; float: left">
+                                                            Tick  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Major1, new { @class = "AllowRating3", type = "checkbox", id = "AllowRating3" })
+                                                        </div>
+                                                        <div style="color: red; float: right">
+                                                            Cross  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Major2, new { @class = "AllowRating4", type = "checkbox", id = "AllowRating4", @Value = "true", @checked = "true" })
+                                                        </div>
+
+                                                    }
+                                                    @if (@Model.UxDetailsInfoModels[i].Major == null || @Model.UxDetailsInfoModels[i].Major == "")
+                                                    {
+                                                        <div style="color: green; float: left">
+                                                            Tick  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Major1, new { @class = "AllowRating3", type = "checkbox", id = "AllowRating3" })
+                                                        </div>
+                                                        <div style="color: red; float: right">
+                                                            Cross  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Major2, new { @class = "AllowRating4", type = "checkbox", id = "AllowRating4" })
+                                                        </div>
+                                                    }
+                                                </td>
+                                                <td style="background: #E9EBF5">
+
+                                                    @if (@Model.UxDetailsInfoModels[i].Critical == "Tick")
+                                                    {
+                                                        <div style="color: green; float: left">
+                                                            Tick  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Critical1, new { @class = "AllowRating5", type = "checkbox", id = "AllowRating5", @Value = "true", @checked = "true" })
+                                                        </div>
+                                                        <div style="color: red; float: right">
+                                                            Cross  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Critical2, new { @class = "AllowRating6", type = "checkbox", id = "AllowRating6" })
+                                                        </div>
+                                                    }
+                                                    @if (@Model.UxDetailsInfoModels[i].Critical == "Cross")
+                                                    {
+                                                        <div style="color: green; float: left">
+                                                            Tick  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Critical1, new { @class = "AllowRating5", type = "checkbox", id = "AllowRating5" })
+                                                        </div>
+                                                        <div style="color: red; float: right">
+                                                            Cross  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Critical2, new { @class = "AllowRating6", type = "checkbox", id = "AllowRating6", @Value = "true", @checked = "true" })
+                                                        </div>
+
+                                                    }
+                                                    @if (@Model.UxDetailsInfoModels[i].Critical == null || @Model.UxDetailsInfoModels[i].Critical == "")
+                                                    {
+                                                        <div style="color: green; float: left">
+                                                            Tick  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Critical1, new { @class = "AllowRating5", type = "checkbox", id = "AllowRating5" })
+                                                        </div>
+                                                        <div style="color: red; float: right">
+                                                            Cross  <span></span>
+                                                            @Html.TextBoxFor(model => model.UxDetailsInfoModels[i].Critical2, new { @class = "AllowRating6", type = "checkbox", id = "AllowRating6" })
+                                                        </div>
+                                                    }
+                                                </td>
+                                            </tr>
+
+                                        }
+                                    }
+                                }
+                                <tr class="sumsTr" id="sumsTr">
+                                    <td>Total :</td>
+                                    <td>100</td>
+                                    <td class="sumsTd" id="sumsTd">
+                                        <input type="text" class="form-control sumsInput" id="sumsInput" value="" readonly="readonly" />
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr style="background: #ED7D31; text-align: center">
+                                    <td style="background: #ED7D31; text-align: center;display: none"></td>
+                                    <td style="background: #ED7D31; text-align: center;display: none"></td>
+                                    <td style="background: #ED7D31; text-align: center;display: none"></td>
+                                    <td style="background: #ED7D31; text-align: center"></td>
+                                    <td style="background: #ED7D31; text-align: left; font-weight: bold; color: black">STANDARDS</td>
+                                    <td style="background: #ED7D31; text-align: center"></td>
+                                    <td style="background: #ED7D31; text-align: center"></td>
+                                    <td style="background: #ED7D31; text-align: center"></td>
+                                    <td style="background: #ED7D31; text-align: center"></td>
+                                    <td style="background: #ED7D31; text-align: center"></td>
+                                </tr>
+                                @if (Model != null && Model.UxStandardModels.Any())
+                                {
+
+                                    for (int i = 0; i < Model.UxStandardModels.Count; i++)
+                                    {
+                                        if (Model.UxStandardModels[i].Id > 0)
+                                        {
+
+                                            <tr style="background-color: #E9EBF5; text-align: center">
+                                                <td style="display: none">@Html.TextBoxFor(model => model.UxStandardModels[i].SwQcHeadAssignId, new { @class = "form-control SwQcHeadAssignId", id = "SwQcHeadAssignId" })</td>
+                                                <td style="display: none">@Html.TextBoxFor(model => model.UxStandardModels[i].Id, new { @class = "form-control Id", id = "Id" })</td>
+                                                <td style="display: none">@Html.TextBoxFor(model => model.UxStandardModels[i].StandardId, new { @class = "form-control StandardId", type = "text", id = "StandardId" })</td>
+                                                @if (Model.UxStandardModels[i].SwQcHeadAssignId > 0)
+                                                {
+                                                    <td style="background: #92D050">@Html.TextBoxFor(model => model.UxStandardModels[i].StandardRange, new { @class = "form-control StandardRange", type = "text", id = "StandardRange", @style = "background: #92D050;color:black;font-weight:bold", @readonly = "readonly" })</td>
+                                                    <td style="background: #92D050">@Html.TextBoxFor(model => model.UxStandardModels[i].Descriptions, new { @class = "form-control Descriptions", type = "text", id = "Descriptions", @style = "background: #92D050;color:black;font-weight:bold", @readonly = "readonly" })</td>
+
+                                                }
+                                                else
+                                                {
+                                                    <td>@Html.TextBoxFor(model => model.UxStandardModels[i].StandardRange, new { @class = "form-control StandardRange", type = "text", id = "StandardRange", @readonly = "readonly" })</td>
+                                                    <td>@Html.TextBoxFor(model => model.UxStandardModels[i].Descriptions, new { @class = "form-control Descriptions", type = "text", id = "Descriptions", @readonly = "readonly" })</td>
+
+                                                }
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                                <tr style="background: #ED7D31; text-align: center">
+                                    <td style="background: #ED7D31; text-align: center;display: none"></td>
+                                    <td style="background: #ED7D31; text-align: center"></td>
+                                    <td style="background: #ED7D31; text-align: left;font-weight: bold;color:black" colspan="2">Final Comment</td>
+                                    <td style="background: #ED7D31; text-align: left; font-weight: bold; color: black" colspan="2">Attachment</td>
+                                    <td style="background: #ED7D31; text-align: left; font-weight: bold; color: black" colspan="2">Download Attachment</td>
+                                </tr>
+                                @if (Model != null && Model.UxStandardModels1.Any())
+                                {
+
+                                    for (int i = 0; i < Model.UxStandardModels1.Count; i++)
+                                    {
+                                        if (Model.UxStandardModels1[i].StandardId > 0)
+                                        {
+                                            <tr style="background-color: #E9EBF5; text-align: center">
+                                                <td style="display: none">
+                                                    @Html.TextBoxFor(model => model.UxStandardModels1[i].Id, new { @class = "form-control Id", id = "Id" })
+                                                    @Html.TextBoxFor(model => model.UxStandardModels1[i].StandardId, new { @class = "form-control StandardId", id = "StandardId" })
+                                                    @Html.TextBoxFor(model => model.UxStandardModels1[i].SwQcHeadAssignId, new { @class = "form-control SwQcHeadAssignId", id = "SwQcHeadAssignId" })
+                                                </td>
+                                                <td></td>
+                                                <td colspan="2">@Html.TextAreaFor(model => model.UxStandardModels1[i].FinalComments, new { @class = "form-control FinalComments", rows = "5", type = "text", id = "FinalComments" })</td>
+                                                <td colspan="2">
+                                                    <div class="col-md-12">
+                                                        <div class="col-md-10">
+                                                            <ul class="ulClsForShow1" id="ulClsForShow">
+                                                                <li class="liClsForShow1" id="liClsForShow">
+                                                                    @*@if (Model.UxStandardModels1[i].Attachments != null && Model.UxStandardModels1[i].Attachments.Any())
+                                                                        {
+                                                                            for (int m = 0; m < Model.UxStandardModels1[i].AttachmentsList.Count; m++)
+                                                                            {
+
+                                                                              @Html.TextBoxFor(model => model.UxStandardModels1[i].AttachmentsList[m], new { @class = "txtForList col-md-12", id = "txtForList1", @readonly = "readonly", style = "background-color:#CCCCCC; " })
+                                                                              <br />
+                                                                            }
+
+                                                                        }*@
+                                                                    @if (Model.UxStandardModels1[i].FilesDetails != null && Model.UxStandardModels1[i].FilesDetails.Any())
+                                                                    {
+                                                                        for (int m = 0; m < Model.UxStandardModels1[i].FilesDetails.Count; m++)
+                                                                        {
+                                                                            var urls = Model.UxStandardModels1[i].FilesDetails[m].FilePath.Split('|').ToList();
+
+                                                                            @*@Html.TextBoxFor(model => model.UxStandardModels1[i].FilesDetails[m].FilePath, new { @class = "txtForList col-md-12", id = "txtForList1", @readonly = "readonly", style = "background-color:#CCCCCC; " })*@
+                                                                            for (int k = 0; k < urls.Count; k++)
+                                                                            {
+                                                                                var last = urls[k].Split('_').Last();
+                                                                                var lastNameForM = Model.UxStandardModels1[i].FilesDetails[m].FilePath;
+
+                                                                                lastNameForM = Path.GetFileName(last);
+
+                                                                                @Html.TextBoxFor(model => lastNameForM, new { @class = "txtForList col-md-12", id = "txtForList1", @readonly = "readonly", style = "background-color:#CCCCCC; " })
+                                                                                @*@Html.TextAreaFor(model => lastNameForM, new { style = "width:100px;height:100px;", disabled = "disabled" })*@
+                                                                            }
+
+                                                                            <br />
+                                                                        }
+
+                                                                    }
+                                                                </li>
+
+                                                            </ul>
+                                                        </div>
+
+                                                        <div class="col-md-2">
+                                                            <div class="closeImg41 fa fa-remove btn btn-danger" id="closeImg41">
+                                                                @*@Html.HiddenFor(model => model.UxStandardModels1[i].SwQcHeadAssignId, new { @class = "clsRmv11", @id = "clsRmv11" })*@
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <br />
+                                                    <br />
+                                                    <br />
+                                                    <div class="col-md-6">
+                                                        @*<ul class="ulClsForShow123" id="ulClsForShow12" style="display: none">
+                                                            <li class="liClsForShow123" id="liClsForShow12">
+                                                                @Html.HiddenFor(model => model.UxStandardModels1[i].Attachments, new { @class = "clsRmv" })
+                                                            </li>
+                                                        </ul>*@
+                                                    </div>
+
+                                                    @Html.HiddenFor(model => model.UxStandardModels1[i].SwQcHeadAssignId, new { id = "SwQcIssueId" })
+
+                                                    <div class="col-md-11">
+                                                        <table class="File11" id="hh1">
+                                                            <tr id="trIdForFile">
+                                                                <td class="filesss" id="filesId">
+
+                                                                    <div class="col-md-9" id="fileIdForCr">
+                                                                        <input type="file" name="@Model.UxStandardModels1[i].SwQcHeadAssignId" id="File11" />
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        <button type="button" id="removeProductRow" class="btn btn-circle btn-danger" onclick=" removeDetailRow($(this).closest('tr')); ">
+                                                                            <span><i class="fa fa-times" aria-hidden="true"></i></span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <br /><br />
+                                                                </td>
+                                                            </tr>
+
+                                                        </table>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <div class="col-md-2">
+                                                            <button type="button" id="upPlusBt" class="btn btn-group-circle btn-success center" onclick="javascript: addField('@Model.UxStandardModels1[i].SwQcHeadAssignId', $(this).closest('tr')); ">
+                                                                <span>
+                                                                    <i class=" fa fa-plus" aria-hidden="true">
+                                                                    </i>
+                                                                </span>
+                                                            </button><br /><br />
+                                                        </div>
+                                                        <div class="col-md-6"></div>
+                                                    </div>
+                                                
+                                                </td>
+                                                <td colspan="2">
+                                                    <div class="file-preview-thumbnails">
+                                                        <div class="">
+                                                            <div class="file-preview-frame file-preview-initial" id="preview-1475130072371-init_0" data-fileindex="init_0" data-template="image">
+                                                                <div class="col-lg-12">
+                                                                    @Html.HiddenFor(model => model.UxStandardModels1[i].Attachments, new { @class = "clsRmv" })
+                                                                    @if (Model.UxStandardModels1[i].FilesDetails != null && Model.UxStandardModels1[i].FilesDetails.Any())
+                                                                    {
+                                                                        for (int m = 0; m < Model.UxStandardModels1[i].FilesDetails.Count; m++)
+                                                                        {
+                                                                            var urls = Model.UxStandardModels1[i].FilesDetails[m].FilePath.Split('|').ToList();
+
+                                                                            for (int k = 0; k < urls.Count; k++)
+                                                                            {
+                                                                                var last = urls[k].Split('_').Last();
+                                                                                var lastNameForM = Model.UxStandardModels1[i].FilesDetails[m].FilePath;
+
+                                                                                lastNameForM = Path.GetFileName(last);
+                                                                                if (lastNameForM != "")
+                                                                                {
+                                                                                    <a href="@Model.UxStandardModels1[i].FilesDetails[m].FilePath" target="_blank" style="float: left">
+                                                                                        <p style="float: left">#@Html.DisplayFor(model => lastNameForM, new { disabled = "disabled" })</p>
+                                                                                    </a>
+                                                                                    <br />
+                                                                                }
+
+                                                                            }
+
+                                                                        }
+                                                                    }
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+
+                                    <tr style="background-color: #E9EBF5; text-align: center">
+                                        <td style="display: none">
+                                            @Html.TextBoxFor(model => model.Id, new { @class = "form-control Id", id = "Id" })
+                                            @Html.TextBoxFor(model => model.StandardId, new { @class = "form-control StandardId", id = "StandardId" })
+                                            @Html.TextBoxFor(model => model.SwQcHeadAssignId, new { @class = "form-control SwQcHeadAssignId", id = "SwQcHeadAssignId" })
+                                        </td>
+                                        <td></td>
+                                        <td colspan="2">@Html.TextAreaFor(model => model.FinalComments, new { @class = "form-control FinalComments1", rows = "5", type = "text", id = "FinalComments1" })</td>
+                                        <td colspan="2">
+                                            <div class="col-md-6">
+                                                <ul class="ulClsForShow123" id="ulClsForShow12" style="display: none">
+
+                                                    <li class="liClsForShow123" id="liClsForShow12">
+                                                        @Html.HiddenFor(model => model.Attachments, new { @class = "clsRmv" })
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            @Html.HiddenFor(model => model.SwQcHeadAssignId, new { @class = "form-control", id = "SwQcHeadAssignId22", value = "@ViewBag.SwQcHeadAssignId", style = "text-align: center;width:120px" })
+                                            @*@Html.HiddenFor(model => model.SwQcHeadAssignId, new { id = "SwQcIssueId" })*@
+                                            <div class="col-md-11">
+                                                <table class="File11" id="hh1">
+                                                    <tr id="trIdForFile">
+                                                        <td class="filesss" id="filesId">
+                                                            <div class="col-md-9" id="fileIdForCr">
+                                                                <input type="file" name="@ViewBag.SwQcHeadAssignId" id="File11" class="File11" />
+                                                                @*@Html.TextBoxFor(model => model.FileHttpB, new { @type = "file", @class = "input-file", @name = "@Model.FileHttpB", @id = "File11" })*@
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <button type="button" id="removeProductRow" class="btn btn-circle btn-danger" onclick="removeDetailRow($(this).closest('tr')); ">
+                                                                    <span><i class="fa fa-times" aria-hidden="true"></i></span>
+                                                                </button>
+                                                            </div>
+                                                            <br /><br />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="col-md-2">
+                                                    <button type="button" id="upPlusBt" class="btn btn-group-circle btn-success center" onclick="javascript: addField('@ViewBag.SwQcHeadAssignId', $(this).closest('tr'));">
+                                                        <span><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                                    </button><br /><br />
+                                                </div>
+                                                <div class="col-md-6"></div>
+                                            </div>
+                                        </td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4">
+            @if (ViewContext.HttpContext.User.IsInRole("PM") || ViewContext.HttpContext.User.IsInRole("PMHEAD"))
+            {
+                <input type="submit" id="btnforFinalSubmit" class="btn sbold uppercase btn-outline red" value="Do you want to submit finally?" />
+            }
+            @*<input type="submit" id="btnforFinalSubmit" class="btn sbold uppercase btn-outline red" value="Do you want to submit finally?" />*@
+        </div>
+        <div class="col-lg-4"></div>
+    </div>
+
+    @Html.HiddenFor(model => model.SwQcHeadAssignId, new { @class = "form-control", id = "SwQcHeadAssignId23", value = "@ViewBag.SwQcHeadAssignId", style = "text-align: center;width:120px" })
+    @Html.HiddenFor(model => model.ProjectMasterId, new { @class = "form-control", id = "ProjectMasterId22", value = "@ViewBag.ProIds", style = "text-align: center;width:120px" })
+    @Html.HiddenFor(model => model.ProjectName, new { @class = "form-control", id = "ProjectName22", value = "@ViewBag.ProNames", style = "text-align: center;width:120px" })
+
+}
+<script type="text/javascript">
+    var AllFinalAmount = 0;
+   
+    $(function () {
+        $("body:first").addClass("page-sidebar-closed");
+        $("ul.page-sidebar-menu").addClass("page-sidebar-menu-closed");
+
+
+        $("#tbl tr.clsForObtains").each(function () {
+            var final_Am_Id1 = $.trim($(this).find('#ObtainedPoint').val());
+
+            if (final_Am_Id1 == "") {
+                final_Am_Id1 = 0;
+            }
+            AllFinalAmount += +$.trim($(this).find('#ObtainedPoint').val());
+        });
+
+        $.trim($('#sumsInput').val(AllFinalAmount));
+        var vval = parseFloat($('#sumsInput').val()).toFixed(2);
+        $.trim($('#sumsInput').val(vval));
+    });
+    function addField(id, td) {
+        td.find('.File11').append($("<tr id='trIdForFile'><td class='filesss' id='filesId'><div class='col-md-9' id='fileIdForCr'><input type='file' name='" + id + "' id='File11'  class='File11'/></div> <div class='col-md-2'><button type='button' id='removeProductRow' class='btn btn-circle btn-danger' onclick=removeDetailRow($(this).closest('tr'));> <span><i class='fa fa-times' aria-hidden='true'></i></span></button></div><br /><br /></td></tr>"));
+
+    }
+
+    function removeDetailRow(element) {
+        $(element).remove();
+
+    }
+    $(document).on('click', '.fa-remove', function () {
+        var currentRow = $(this).closest('tr').find('td');
+        $(currentRow).find('li').remove().val();
+        $(currentRow).find('li').removeClass('.txtForList');
+        $(currentRow).find('li').removeClass('.clsRmv');
+        $(currentRow).removeClass('.txtForList');
+        
+    });
+    var AllowRating11 = false;
+    var AllowRating22 = false;
+    $(document).ready(function () {
+        if ($(this).closest("tr").find("#AllowRating1").is(':checked')) {
+            $(this).closest("tr").find("#AllowRating1").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating1").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating1").attr("readonly", false);
+
+            $(this).closest("tr").find("#AllowRating2").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating2").prop("checked", false);
+            $(this).closest("tr").find("#AllowRating2").attr("readonly", true);
+
+        } else {
+            $(this).closest("tr").find("#AllowRating1").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating1").prop("checked", false);
+
+            $(this).closest("tr").find("#AllowRating2").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating2").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating2").attr("readonly", false);
+        }
+
+        $('#tbl').on('change', '.AllowRating1', function () {
+            if ($(this).closest("tr").find("#AllowRating1").is(':checked')) {
+                $(this).closest("tr").find("#AllowRating1").attr('value', 'true');
+                $(this).closest("tr").find("#AllowRating1").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating1").attr("readonly", false);
+
+                $(this).closest("tr").find("#AllowRating2").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating2").prop("checked", false);
+                $(this).closest("tr").find("#AllowRating2").attr("readonly", true);
+
+            } else {
+                $(this).closest("tr").find("#AllowRating1").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating1").prop("checked", false);
+
+
+                $(this).closest("tr").find("#AllowRating2").attr('value', 'true');
+                $(this).closest("tr").find("#AllowRating2").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating2").attr("readonly", false);
+            }
+
+        });
+
+        if ($(this).closest("tr").find("#AllowRating2").is(':checked')) {
+            $(this).closest("tr").find("#AllowRating2").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating2").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating2").attr("readonly", false);
+
+
+            $(this).closest("tr").find("#AllowRating1").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating1").prop("checked", false);
+            $(this).closest("tr").find("#AllowRating1").attr("readonly", true);
+        } else {
+            $(this).closest("tr").find("#AllowRating2").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating2").prop("checked", false);
+
+
+            $(this).closest("tr").find("#AllowRating1").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating1").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating1").attr("readonly", false);
+        }
+
+        $('#tbl').on('change', '.AllowRating2', function () {
+            if ($(this).closest("tr").find("#AllowRating2").is(':checked')) {
+                $(this).closest("tr").find("#AllowRating2").attr('value', 'true');
+
+                $(this).closest("tr").find("#AllowRating2").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating2").attr("readonly", false);
+
+                $(this).closest("tr").find("#AllowRating1").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating1").prop("checked", false);
+                $(this).closest("tr").find("#AllowRating1").attr("readonly", true);
+
+            } else {
+                $(this).closest("tr").find("#AllowRating2").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating2").prop("checked", false);
+
+                $(this).closest("tr").find("#AllowRating1").attr('value', 'true');
+                $(this).closest("tr").find("#AllowRating1").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating1").attr("readonly", false);
+            }
+
+        });
+
+        //-------
+        if ($(this).closest("tr").find("#AllowRating3").is(':checked')) {
+            $(this).closest("tr").find("#AllowRating3").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating3").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating3").attr("readonly", false);
+
+            $(this).closest("tr").find("#AllowRating4").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating4").prop("checked", false);
+            $(this).closest("tr").find("#AllowRating4").attr("readonly", true);
+
+        } else {
+            $(this).closest("tr").find("#AllowRating3").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating3").prop("checked", false);
+
+            $(this).closest("tr").find("#AllowRating4").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating4").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating4").attr("readonly", false);
+        }
+
+        $('#tbl').on('change', '.AllowRating3', function () {
+            if ($(this).closest("tr").find("#AllowRating3").is(':checked')) {
+                $(this).closest("tr").find("#AllowRating3").attr('value', 'true');
+                $(this).closest("tr").find("#AllowRating3").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating3").attr("readonly", false);
+
+                $(this).closest("tr").find("#AllowRating4").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating4").prop("checked", false);
+                $(this).closest("tr").find("#AllowRating4").attr("readonly", true);
+
+            } else {
+                $(this).closest("tr").find("#AllowRating3").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating3").prop("checked", false);
+
+
+                $(this).closest("tr").find("#AllowRating4").attr('value', 'true');
+                $(this).closest("tr").find("#AllowRating4").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating4").attr("readonly", false);
+            }
+
+        });
+
+        if ($(this).closest("tr").find("#AllowRating4").is(':checked')) {
+            $(this).closest("tr").find("#AllowRating4").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating4").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating4").attr("readonly", false);
+
+
+            $(this).closest("tr").find("#AllowRating3").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating3").prop("checked", false);
+            $(this).closest("tr").find("#AllowRating3").attr("readonly", true);
+        } else {
+            $(this).closest("tr").find("#AllowRating4").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating4").prop("checked", false);
+
+
+            $(this).closest("tr").find("#AllowRating3").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating3").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating3").attr("readonly", false);
+        }
+
+        $('#tbl').on('change', '.AllowRating4', function () {
+            if ($(this).closest("tr").find("#AllowRating4").is(':checked')) {
+                $(this).closest("tr").find("#AllowRating4").attr('value', 'true');
+                $(this).closest("tr").find("#AllowRating4").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating4").attr("readonly", false);
+
+                $(this).closest("tr").find("#AllowRating3").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating3").prop("checked", false);
+                $(this).closest("tr").find("#AllowRating3").attr("readonly", true);
+
+            } else {
+                $(this).closest("tr").find("#AllowRating4").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating4").prop("checked", false);
+
+                $(this).closest("tr").find("#AllowRating3").attr('value', 'true');
+                $(this).closest("tr").find("#AllowRating3").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating3").attr("readonly", false);
+            }
+
+        });
+        //--------------
+
+        if ($(this).closest("tr").find("#AllowRating5").is(':checked')) {
+            $(this).closest("tr").find("#AllowRating5").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating5").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating5").attr("readonly", false);
+
+            $(this).closest("tr").find("#AllowRating6").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating6").prop("checked", false);
+            $(this).closest("tr").find("#AllowRating6").attr("readonly", true);
+
+        } else {
+            $(this).closest("tr").find("#AllowRating5").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating5").prop("checked", false);
+
+            $(this).closest("tr").find("#AllowRating6").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating6").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating6").attr("readonly", false);
+        }
+
+        $('#tbl').on('change', '.AllowRating5', function () {
+            if ($(this).closest("tr").find("#AllowRating5").is(':checked')) {
+                $(this).closest("tr").find("#AllowRating5").attr('value', 'true');
+                $(this).closest("tr").find("#AllowRating5").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating5").attr("readonly", false);
+
+                $(this).closest("tr").find("#AllowRating6").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating6").prop("checked", false);
+                $(this).closest("tr").find("#AllowRating6").attr("readonly", true);
+
+            } else {
+                $(this).closest("tr").find("#AllowRating5").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating5").prop("checked", false);
+
+
+                $(this).closest("tr").find("#AllowRating6").attr('value', 'true');
+                $(this).closest("tr").find("#AllowRating6").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating6").attr("readonly", false);
+            }
+
+        });
+
+        if ($(this).closest("tr").find("#AllowRating6").is(':checked')) {
+            $(this).closest("tr").find("#AllowRating6").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating6").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating6").attr("readonly", false);
+
+
+            $(this).closest("tr").find("#AllowRating5").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating5").prop("checked", false);
+            $(this).closest("tr").find("#AllowRating5").attr("readonly", true);
+        } else {
+            $(this).closest("tr").find("#AllowRating6").attr('value', 'false');
+            $(this).closest("tr").find("#AllowRating6").prop("checked", false);
+
+
+            $(this).closest("tr").find("#AllowRating5").attr('value', 'true');
+            $(this).closest("tr").find("#AllowRating5").prop("checked", true);
+            $(this).closest("tr").find("#AllowRating5").attr("readonly", false);
+        }
+
+        $('#tbl').on('change', '.AllowRating6', function () {
+            if ($(this).closest("tr").find("#AllowRating6").is(':checked')) {
+                $(this).closest("tr").find("#AllowRating6").attr('value', 'true');
+
+                $(this).closest("tr").find("#AllowRating6").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating6").attr("readonly", false);
+
+                $(this).closest("tr").find("#AllowRating5").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating5").prop("checked", false);
+                $(this).closest("tr").find("#AllowRating5").attr("readonly", true);
+
+            } else {
+                $(this).closest("tr").find("#AllowRating6").attr('value', 'false');
+                $(this).closest("tr").find("#AllowRating6").prop("checked", false);
+
+                $(this).closest("tr").find("#AllowRating5").attr('value', 'true');
+                $(this).closest("tr").find("#AllowRating5").prop("checked", true);
+                $(this).closest("tr").find("#AllowRating5").attr("readonly", false);
+            }
+
+        });
+        
+        $('#tbl').on('click', '#closeImg41', function () {
+            $('#loading').show();
+          
+            var projectMasterId = $('#ProjectMasterId').val();
+            var swQcHeadAssignId = $('#SwQcHeadAssignId11').val();
+            var projectName = $('#ProjectName').val();
+
+            var obj = {};
+            obj.swQcHeadAssignId = swQcHeadAssignId;
+            obj.projectMasterId = projectMasterId;
+            obj.projectName = projectName;
+
+            alertify.confirm('Confirm message', 'Do you want to delete previous attachments?', function() {
+                $.ajax({
+                    url: '@Url.Action("UserExperienceAttachmentDelete", "ProjectManager")',
+                    type: 'POST',
+                    data: JSON.stringify(obj),
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function(data) {
+                        console.log("data :" + data);
+
+                        if (data == "ok") {
+                            alertify.dialog('alert').set({
+                                'title': '   ',
+                                'transition': 'zoom',
+                                'message': "Attachments deleted successfully.",
+                            }).show();
+                          
+                            window.location = '@Url.Action("UserExperienceEntryPhase", "ProjectManager")' + '?swQcHeadIds' + swQcHeadAssignId + '&proName=' + projectName + '&proIds=' + projectMasterId;
+                            window.location.reload(true);
+                            $('#loading').hide();
+                        }
+                    }
+                });
+             
+            }, function () {
+                alertify.error('Cancel');
+                $('#loading').hide();
+            });
+        });//end
+
+    });
+
+
+
+    //var intPt = 0;
+    //var intPt2 = 0;
+    //var prebJanVal = 0;
+    //function ObtainedValueFunc(input1) {
+    //    var input5 = input1;
+    //    var prevInts = $.trim($(input1).closest('tr').find('#StandardPoint').val());
+
+    //    if (prevInts != "") {
+    //        prevInts = parseInt(prevInts);
+    //    } else {
+    //        prevInts = 0;
+    //    }
+
+    //    if (input1.value != "") {
+    //        input1 = parseInt(input1.value);
+    //    } else {
+    //        input1 = 0;
+    //    }
+
+    //    if (prevInts < input1) {
+    //        var c = $.trim($(input5).closest('tr').find('#ObtainedPoint').val(""));
+    //        var d = $.trim($(input5).closest('tr').find('#ObtainedPoint').text(""));
+
+    //        alertify.dialog('alert').set({
+    //            'title': '   ',
+    //            'transition': 'zoom',
+    //            'message': "Obtained Point must be smaller than or equal to Standard point.",
+    //        }).show();
+
+    //        return false;
+    //    }
+
+    //    var input2 = document.getElementById('sumsInput');
+    //    prebJanVal = prebJanVal;
+
+        
+    //    if (input1==0 && prebJanVal != "" && prebJanVal != 0 && prebJanVal != "0") {
+    //        intPt = parseInt(input2.value) - prebJanVal;
+    //        input2.value = intPt;
+    //    }
+
+    //    if (input1 == "0" || input1 == "" || input1 == 0) {
+    //        input1 = 0;
+    //        prebJanVal = input1;
+    //    } else if (input1 != "0" && input1 != "" && input1 != 0) {
+    //        input1 = parseInt(input1);
+    //        prebJanVal = input1;
+    //    }
+
+    //    if (input2.value == "" || input2.value == "0" || input2.value == 0) {
+    //        input2.value = 0;
+    //        intPt2 = parseInt(input2.value) + parseInt(input1);
+    //       // input2.value = parseInt(input2.value) + parseInt(input1);
+    //        // input2 += input2.value;
+    //        //intPt2 = parseInt(input2.value);
+    //        input2.value = parseInt(intPt2);
+    //    }
+    //    else if (input2.value != "" && input2.value != "0" && input2.value != 0) {
+    //        input2.value = parseInt(input2.value);
+    //        intPt2 = parseInt(input2.value) + parseInt(input1);
+    //       // input2.value = parseInt(input2.value) + parseInt(input1);
+            
+    //        //intPt2 = parseInt(input2.value);
+    //        //input2.value = parseInt(intPt2);
+    //        input2.value = parseInt(intPt2);
+    //    }
+    //}
+    //ObtainedValueFunc
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31
+            && (charCode < 48 || charCode > 57)) {
+            return false;
+        } else {
+            return true;
+        }
+        //
+    }
+    function ObtainedValueFunc(input1) {
+        var AllFinalAmount2 = 0;
+        $("#tbl tr.clsForObtains").each(function () {
+            var ObtainedPoint = $.trim($(this).find('#ObtainedPoint').val());
+
+            if (ObtainedPoint == "") {
+                ObtainedPoint = 0;
+            }
+            var StandardPoint = $.trim($(this).find('#StandardPoint').val());
+
+            if (StandardPoint == "") {
+                StandardPoint = 0;
+            }
+
+            var StandardPoint1 = parseFloat(StandardPoint);
+            var ObtainedPoint1 = parseFloat(ObtainedPoint);
+
+
+            if (StandardPoint1 < ObtainedPoint1) {
+
+                var c = ObtainedPoint = $.trim($(this).find('#ObtainedPoint').val(""));
+                var d = ObtainedPoint = $.trim($(this).find('#ObtainedPoint').text(""));
+                $('#sumsInput').val("");
+                $('#sumsInput').text("");
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Obtained Point must be smaller than or equal to Standard point.",
+                }).show();
+
+                return false;
+            }
+
+            AllFinalAmount2 += +$.trim($(this).find('#ObtainedPoint').val());
+    
+            $.trim($('#sumsInput').val(AllFinalAmount2));
+            var vval = parseFloat($('#sumsInput').val()).toFixed(2);
+            $.trim($('#sumsInput').val(vval));
+        });
+    }
+
+</script>

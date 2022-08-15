@@ -1,0 +1,195 @@
+﻿@model ProjectManagement.ViewModels.Commercial.VmProjectLc
+@{
+    ViewBag.Title = "CreateLcDetailsById";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">Create</div>
+    </div>
+    <div class="portlet-body">
+        @using (Html.BeginForm("CreateLcDetailsById", "Commercial", FormMethod.Post, new { enctype = "multipart/form-data", id = "formLcDetails" }))
+        {
+            @Html.HiddenFor(m => m.LcOpeningPermissionModel.Id)
+            @Html.HiddenFor(m => m.LcOpeningPermissionModel.ProjectMasterId)
+            @Html.HiddenFor(m => m.LcOpeningPermissionDetailModel.Id)
+            @Html.HiddenFor(m => m.LcOpeningPermissionDetailModel.Added)
+            @Html.HiddenFor(m => m.LcOpeningPermissionDetailModel.AddedDate)
+            @Html.HiddenFor(m => m.LcOpeningPermissionDetailModel.IsComplete)
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-2">Project Name</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionModel.Model, new { @class = "form-control", @readonly = "" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-2">Oracle PO</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionModel.OraclePoNo, new { @class = "form-control", @readonly = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-2">Permitted Amount</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionModel.LcAmount, new { @class = "form-control", @readonly = "" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-2">Permitted Currency</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionModel.Currency, new { @class = "form-control", @readonly = "" })
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-2">Oracle LC No</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionDetailModel.OracleLcNo, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-2">Opening Date</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionDetailModel.OpeningDate, new { @class = "form-control date_picker", required = "required" })
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-2">LC Value</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionDetailModel.LcValue, new { @class = "form-control", type = "number", required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-2">Currency</div>
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(m => m.LcOpeningPermissionDetailModel.Currency, new List<SelectListItem>
+                                {
+                                    new SelectListItem () { Text ="Select" , Value = ""},
+                                    new SelectListItem () { Text ="USD" , Value = "USD"},
+                                    new SelectListItem () { Text ="EUR" , Value = "EUR"},
+                                    new SelectListItem () { Text ="CNY" , Value = "CNY"}
+                                }, new { @class = "form-control", required = "required" })
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-2">BdtLcAmount</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionDetailModel.BdtLcAmount, new { @class = "form-control", type = "number" })
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-2">SupplierDraftDate</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionDetailModel.SupplierDraftDate, new { @class = "form-control date_picker" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-2">BankOpeningDate</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionDetailModel.BankOpeningDate, new { @class = "form-control date_picker" ,})
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-2">LcPassDate</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionDetailModel.LcPassDate, new { @class = "form-control date_picker" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-2">SampleSendDate</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionDetailModel.SampleSendDate, new { @class = "form-control date_picker" })
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-2">BtrcNocDate</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionDetailModel.BtrcNocDate, new { @class = "form-control date_picker" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-2">NocReceiveDate</div>
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.LcOpeningPermissionDetailModel.NocReceiveDate, new { @class = "form-control date_picker" })
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-md-2">
+                                @if (Model.LcOpeningPermissionDetailModel.Id == 0)
+                                {
+                                    <input type="submit" value="submit" class="btn btn-danger" />
+                                }
+                                @if (Model.LcOpeningPermissionDetailModel.Id > 0)
+                                {
+                                    <input type="submit" value="update" class="btn btn-warning" />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">Previous LC Details</div>
+    </div>
+    <div class="portlet-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>LC Value</th>
+                        <th>Currency</th>
+                        <th>Opening Date</th>
+                        <th>LC No</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var v in Model.LcOpeningPermissionDetailModels)
+                    {
+                        <tr>
+                            <td>@v.LcValue</td>
+                            <td>@v.Currency</td>
+                            <td>@v.OpeningDate</td>
+                            <td>@v.OracleLcNo</td>
+                            <td>
+                                <input type="submit" class="btn btn-success btn-sm mt-ladda-btn ladda-button btn-circle" value="Edit" onclick="location.href='@Url.Action("CreateLcDetailsById", "Commercial", new { id = v.Id })'" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

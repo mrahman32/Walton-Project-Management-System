@@ -1,0 +1,258 @@
+﻿@using ProjectManagement.Models
+@model ProjectManagement.ViewModels.Management.VmBidding
+@*<h2>BiddingDetails</h2>*@
+
+<link href="~/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/layouts/layout4/css/layout.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/layouts/layout4/css/themes/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
+<link href="~/assets/layouts/layout4/css/custom.min.css" rel="stylesheet" type="text/css" />
+
+
+@*<h2>BiddingApprovalPendingList</h2>*@
+<style>
+    .page-header-fixed .page-container {
+        margin-top: 0px;
+    }
+
+    .navbar-fixed-top {
+        position: relative;
+    }
+
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 70px;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 999;
+        text-align: center;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="col-lg-12">
+                    <div class="caption font-dark">
+                        <i class="icon-settings font-dark"></i>
+                        <span class="caption-subject bold uppercase">  Bidding Management Approval Pending List</span>
+                    </div>
+                    <div class="tools"> </div>
+                </div>
+                <br /><br />
+                <div class="col-lg-12">
+                    <div class="col-lg-9">
+
+                    </div>
+                    <div class="col-lg-3"></div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="table-scrollable table-responsive">
+                    @if (Model != null && Model.CreateBidModels.Any())
+                    {
+                        for (int i1 = 0; i1 < Model.CreateBidModels.Count; i1++)
+                        {
+                            if (Model.CreateBidModels[i1].Category.Contains("Spare:"))
+                            {
+                                <table class="table table-striped table-bordered table-hover tbl3" id="tbl3">
+                                    <thead>
+                                        <tr style="font-weight:bold;color:brown;font-size:12px">
+                                            <th style="border:1px solid green;padding:8px">#</th>
+                                            <th style="display:none">BidId</th>
+                                            <th style="border:1px solid green;padding:8px">Bidder<br />Name</th>
+                                            <th style="border:1px solid green;padding:8px">SalableQty</th>
+                                            <th style="border:1px solid green;padding:8px">Per_Unit<br />Price</th>
+                                            <th style="border:1px solid green;padding:8px">Bidder<br />Bid_Qty</th>
+                                            <th style="border:1px solid green;padding:8px">Bidder<br />TotalPrice</th>
+                                            <th style="border:1px solid green;padding:8px;width:100px"> Bidding<br />Date</th>
+                                            <th style="display:none">Users</th>
+                                            <th style="border: 1px solid green; padding: 8px">Status</th>
+                                            <th style="border: 1px solid green; padding: 8px">Details</th>
+                                            @*<th style="border: 1px solid green; padding: 8px">Excel</th>*@
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Bid_SparePartsDetailsModels.Any())
+                                        {
+                                            for (int i = 0; i < Model.Bid_SparePartsDetailsModels.Count; i++)
+                                            {
+                                                <tr class="tableTrCls1" style="font-size:12px;font-weight:bold">
+                                                    <td style="border:1px solid black;padding:8px"></td>
+                                                    <td style="display:none" class="headIds2" id="headIds2">
+                                                        @Html.HiddenFor(x => x.Bid_SparePartsDetailsModels[i].BidId)
+                                                    </td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_SparePartsDetailsModels[i].UserFullName</td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_SparePartsDetailsModels[i].SalableQty</td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_SparePartsDetailsModels[i].Per_Unit_Price</td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_SparePartsDetailsModels[i].Bidder_Bid_Qty</td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_SparePartsDetailsModels[i].BidderPerUnitPrice</td>
+
+                                                    <td style="border:1px solid black;padding:8px;width:150px">
+                                                        @String.Format("{0:yyyy-MM-dd}", @Model.Bid_SparePartsDetailsModels[i].BiddingDate)
+                                                    </td>
+                                                    <td style="display:none">@Model.Bid_SparePartsDetailsModels[i].Added</td>
+                                                    <td style="border:1px solid black;padding:8px">
+                                                        @Model.Bid_SparePartsDetailsModels[i].ApproveStatus
+                                                    </td>
+
+                                                    <td style="border: 1px solid black; padding: 8px; width: 150px">
+                                                        <a class="btn btn-success" style="color:white" target="_blank" href='@Url.Action("BiddingDetailsForPrice", "Management", new { SpareIds = @Model.Bid_SparePartsDetailsModels[i].BidId, statusForBid = "BidderList", persons = @Model.Bid_SparePartsDetailsModels[i].UserFullName, addedId = @Model.Bid_SparePartsDetailsModels[i].Added, bidStatus = @Model.Bid_SparePartsDetailsModels[i].ApproveStatus })'>
+                                                            <span class="glyphicon glyphicon-list-alt"></span> Details
+                                                        </a>
+                                                    </td>
+                                                    @*<td style="border: 1px solid black; padding: 8px; font-weight: bold">
+                                                        @Html.ActionLink(
+                                                                "Export to Excel",// linkText
+                                                                "GetExcel", // actionName
+                                                                "Management", // controllerName
+                                                                new
+                                                                {   // routeValues
+                                                                    bidId = @Model.Bid_SparePartsDetailsModels[i].BidId,
+                                                                    category = @Model.Bid_SparePartsDetailsModels[i].Category,
+                                                                    added = @Model.Bid_SparePartsDetailsModels[i].Added
+
+                                                                },
+                                                                new { target = "_blank" })
+
+                                                    </td>*@
+                                                </tr>
+                                            }
+                                        }
+
+                                    </tbody>
+                                </table>
+                                <br />
+                            }
+                            else if (Model.CreateBidModels[i1].Category.Contains("Handset:"))
+                            {
+                                <table class="table table-striped table-bordered table-hover tbl4" id="tbl4">
+                                    <thead>
+                                        <tr style="font-weight:bold;color:brown;font-size:12px">
+                                            <th style="border:1px solid green;padding:8px">#</th>
+                                            <th style="display:none">BidId</th>
+                                            <th style="border:1px solid green;padding:8px">Bidder<br />Name</th>
+                                            <th style="border:1px solid green;padding:8px">SalableQty</th>
+                                            <th style="border:1px solid green;padding:8px">Per_Unit<br />Price</th>
+                                            <th style="border:1px solid green;padding:8px">Bidder<br />Bid_Qty</th>
+                                            <th style="border:1px solid green;padding:8px">Bidder<br />TotalPrice</th>
+                                            <th style="border:1px solid green;padding:8px;width:100px"> Bidding<br />Date</th>
+                                            <th style="display:none">Users</th>
+                                            <th style="border: 1px solid green; padding: 8px">Status</th>
+                                            <th style="border: 1px solid green; padding: 8px">Details</th>
+                                            @*<th style="border: 1px solid green; padding: 8px">Excel</th>*@
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Bid_HandsetDetailsModels1.Any())
+                                        {
+                                            for (int i = 0; i < Model.Bid_HandsetDetailsModels1.Count; i++)
+                                            {
+                                                <tr class="tableTrCls1" style="font-size:12px;font-weight:bold">
+                                                    <td style="border:1px solid black;padding:8px"></td>
+                                                    <td style="display:none" class="headIds2" id="headIds2">
+                                                        @Html.HiddenFor(x => x.Bid_HandsetDetailsModels1[i].BidId)
+                                                    </td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_HandsetDetailsModels1[i].UserFullName</td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_HandsetDetailsModels1[i].Qty</td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_HandsetDetailsModels1[i].Per_Unit_Price</td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_HandsetDetailsModels1[i].Bidder_Bid_Qty</td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_HandsetDetailsModels1[i].BidderPerUnitPrice</td>
+
+                                                    <td style="border:1px solid black;padding:8px;width:150px">
+                                                        @String.Format("{0:yyyy-MM-dd}", @Model.Bid_HandsetDetailsModels1[i].BiddingDate)
+                                                    </td>
+                                                    <td style="display:none">>@Model.Bid_HandsetDetailsModels1[i].Added</td>
+                                                    <td style="border:1px solid black;padding:8px">@Model.Bid_HandsetDetailsModels1[i].ApproveStatus</td>
+                                                    <td style="border: 1px solid black; padding: 8px; width: 150px">
+                                                        <a class="btn btn-success" style="color:white" target="_blank" href='@Url.Action("BiddingDetailsForPrice", "Management", new { SpareIds = @Model.Bid_HandsetDetailsModels1[i].BidId, statusForBid = "BidderListForHandset", persons = @Model.Bid_HandsetDetailsModels1[i].UserFullName, addedId = @Model.Bid_HandsetDetailsModels1[i].Added, bidStatus = @Model.Bid_HandsetDetailsModels1[i].ApproveStatus })'>
+                                                            <span class="glyphicon glyphicon-list-alt"></span> Details
+                                                        </a>
+                                                    </td>
+                                                    @*<td style="border: 1px solid black; padding: 8px; font-weight: bold">
+                                                        @Html.ActionLink(
+                                                                "Export to Excel",// linkText
+                                                                "GetExcel", // actionName
+                                                             "Management", // controllerName
+                                                                new
+                                                                {   // routeValues
+                                                                    bidId = @Model.Bid_HandsetDetailsModels1[i].BidId,
+                                                                    category = @Model.Bid_HandsetDetailsModels1[i].Category,
+                                                                    added = @Model.Bid_HandsetDetailsModels1[i].Added
+
+                                                                },
+                                                                new { target = "_blank" })
+
+                                                    </td>*@
+                                                </tr>
+                                            }
+                                        }
+
+                                    </tbody>
+                                </table>
+                                <br />
+                            }
+                        }
+                    }
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    $(function () {
+        $("body:first").addClass("sidebar-collapse");
+        $("ul.page-sidebar-menu").addClass("page-sidebar-menu-closed");
+    });
+    $(document).ready(function () {
+
+        var t = $('#tbl3').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": true,
+                "targets": 0
+            }],
+            "lengthMenu": [[10, 20, 30, 50, -1], [10, 20, 30, 50, "All"]],
+            "order": [[0, 'desc']],
+            "fixedHeader": {
+                header: true,
+                footer: true
+            }
+
+        });
+        t.on('order.dt search.dt', function () {
+            t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+        var t2 = $('#tbl4').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": true,
+                "targets": 0
+            }],
+            "lengthMenu": [[10, 20, 30, 50, -1], [10, 20, 30, 50, "All"]],
+            "order": [[0, 'desc']],
+            "fixedHeader": {
+                header: true,
+                footer: true
+            }
+
+        });
+        t2.on('order.dt search.dt', function () {
+            t2.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+    });
+</script>

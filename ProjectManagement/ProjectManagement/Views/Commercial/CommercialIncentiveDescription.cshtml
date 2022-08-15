@@ -1,0 +1,751 @@
+﻿@*<h2>CommercialIncentiveDescription</h2>*@
+@using System.Diagnostics
+@using System.Web.Mvc.Html
+@model ProjectManagement.ViewModels.Commercial.VmCommercialNewIncentivePolicy
+
+<script src="~/Scripts/FileSaver/jquery.wordexport.js"></script>
+<script src="~/Scripts/jquery.table2excel.min.js"></script>
+<script src="~/Scripts/FileSaver/jquery.wordexport.js"></script>
+<style>
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 70px;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 999;
+        text-align: center;
+    }
+
+    .page-header-fixed .page-container {
+        margin-top: 0px;
+    }
+
+    .navbar-fixed-top {
+        position: relative;
+    }
+</style>
+<div class="page-head">
+    <div class="page-title">
+        @*<h1>
+            Incentive
+        </h1>*@
+
+        <br />
+
+    </div>
+    <div class="action">
+        <div class="col-md-12">
+            <div class="col-md-2"></div>
+            <div class="col-md-4">
+                <button class="btn green btn-outline btn-circle btn-sm pull-right jquery-word-export" onclick="ExportToExcel()">
+                    <i class="fa fa-wordpress"></i>
+                    Export as Excel
+                </button>
+            </div>
+            <div class="col-md-4">
+
+                @*<button class="btn red btn-outline btn-circle btn-sm pull-right pdf" id="pdf">
+                    <i class="fa fa-save"></i>
+                    Export as PDF
+                </button>*@
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+
+
+    </div>
+</div>
+@*<div class="portlet box red-pink">*@
+<div class="portlet box blue-dark table2excel" id="table2excel">
+    <div class="portlet-title">
+        <div class="caption">
+            Welcome to Commercial Monthly Work Sheet
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <div class="row">
+            <br /><br /><br /><br />
+            <div class="col-sm-2"></div>
+            <div class="col-lg-2" style="font-weight: bold">
+                Select Month
+            </div>
+            <div class="col-lg-7">
+
+                <div class="col-lg-3">
+
+                    @if (ViewBag.ddlMonths != null)
+                    {
+                        @Html.DropDownListFor(model => model.Month, new SelectList(ViewBag.ddlMonths, "Value", "Text"), new { @class = "DDDMonthCls1 form-control", @id = "DDDMonth" })
+
+                    }
+                </div>
+                <div class="col-lg-2">
+                    @if (ViewBag.ddlYears != null)
+                    {
+                        @Html.DropDownListFor(model => model.Year, new SelectList(ViewBag.ddlYears, "Value", "Text"), new { @class = "DDDYearCls1 form-control", @id = "DDDYear" })
+
+                    }
+                </div>
+                <div class="col-lg-2"></div>
+                <div class="col-lg-3">
+                    <input type="button" id="btnforname" class="btn sbold uppercase btn-outline blue" value="LOAD" />
+                </div>
+                <div class="col-lg-1"></div>
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+        <br /><br /><br />
+        <div class="portlet box">
+            <div class="portlet-title">
+                <div class="caption" style="color: brown; font-weight: bold; text-decoration: underline">
+                    List Purchase Order and Shipment Related
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl7" id="tbl7">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>AllType</th>
+                                <th>OracleLcNo</th>
+                                <th>ProductType</th>
+                                <th>OpeningDate</th>
+                                <th>LcPassDate</th>
+                                <th>LcValue</th>
+                                <th>TtDate</th>
+                                <th>TtNumber</th>
+                                <th>TtValue</th>
+                                <th>Purchase<br />OrderNumber</th>
+                                <th>PoDate</th>
+                                <th>PoCategory</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Cm_TotalPoLcAndTtModels.Any())
+                            {
+                                foreach (var item in Model.Cm_TotalPoLcAndTtModels)
+                                {
+                                    <tr class="tableTrCls2">
+                                        <td></td>
+                                        <td>@item.AllType</td>
+                                        <td>@item.OracleLcNo</td>
+                                        <td>@item.ProductType</td>
+                                        <td>@item.OpeningDate</td>
+                                        <td>@item.LcPassDate</td>
+                                        <td>@item.LcValue</td>
+                                        <td>@item.TtDate</td>
+                                        <td>@item.TtNumber</td>
+                                        <td>@item.TtValue</td>
+                                        <td>@item.PurchaseOrderNumber</td>
+                                        <td>@item.PoDate</td>
+                                        <td>@item.PoCategory</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="portlet box">
+            <div class="portlet-title">
+                <div class="caption" style="color: brown; font-weight: bold; text-decoration: underline">
+                    List Material Shipment & Delivery/Arrived in Factory
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl6" id="tbl6">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th style="display: none">ProjectMasterId</th>
+                                <th>ProjectName</th>
+                                <th>ProjectType</th>
+                                <th>OraclePoNo</th>
+                                <th>PrNo</th>
+                                <th>Order<br />Number</th>
+                                <th>Shipment<br />Type</th>
+                                <th>ContatinerType</th>
+                                <th>IsFinal<br />Shipment?</th>
+                                <th>PrDate</th>
+                                <th>ProjectManager<br />ClearanceDate</th>
+                                <th>Warehouse<br />EntryDate</th>
+                                <th>DaysDiff</th>
+                                <th>Effective<br />Time</th>
+                                <th>Amount</th>
+                                <th>Reward</th>
+                                <th>Penalties</th>
+                                <th>Remarks</th>
+                                <th>Final<br /> Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Cm_MaterialShipmentAndConsumableItemsModels.Any())
+                            {
+                                foreach (var item in Model.Cm_MaterialShipmentAndConsumableItemsModels)
+                                {
+                                    <tr class="tableTrCls2">
+                                        <td></td>
+                                        <td style="display: none">@item.ProjectMasterId</td>
+                                        <td>@item.ProjectName</td>
+                                        <td>@item.ProjectType</td>
+                                        <td>@item.OraclePoNo</td>
+                                        <td>@item.PrNo</td>
+                                        <td>@item.OrderNumber</td>
+                                        <td>@item.ShipmentType</td>
+                                        <td>@item.ContainerType</td>
+                                        <td>@item.IsFinalShipment</td>
+                                        <td>
+                                            @if (@item.PrDate != null)
+                                            {
+                                                @item.PrDate
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (@item.ProjectManagerClearanceDate != null)
+                                            {
+
+                                                @item.ProjectManagerClearanceDate
+
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (@item.WarehouseEntryDate != null)
+                                            {
+                                                @item.WarehouseEntryDate
+                                            }
+                                        </td>
+                                        <td>@item.DaysDiff</td>
+                                        <td>@item.EffectiveTime</td>
+                                        <td>@item.Amount</td>
+                                        <td>@item.Reward</td>
+                                        <td>@item.Penalties</td>
+                                        <td>@item.Remarks</td>
+                                        <td>@item.FinalAmount</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="portlet box">
+            <div class="portlet-title">
+                <div class="caption" style="color: brown; font-weight: bold; text-decoration: underline">
+                    List Spare Parts arrangements and Support to Service Section
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl1" id="tbl1">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Effective<br /> Month</th>
+                                <th>Effective<br />Year</th>
+                                <th>Total Imported <br />spare parts value</th>
+                                <th>Total value of <br />given handset </th>
+                                <th>Amount</th>
+                                <th>Final<br /> Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Cm_SpareArrangementAndSupportModels.Any())
+                            {
+                                foreach (var item in Model.Cm_SpareArrangementAndSupportModels)
+                                {
+                                    <tr class="tableTrCls2">
+                                        <td></td>
+                                        <td>@item.MonthNames</td>
+                                        <td>@item.Years</td>
+                                        <td>@item.TotalImportedSpareValue</td>
+                                        <td>@item.TotalHandsetValue</td>
+                                        <td>@item.Amount</td>
+                                        <td>@item.FinalAmount</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="portlet box">
+            <div class="portlet-title">
+                <div class="caption" style="color:brown;font-weight: bold;text-decoration: underline">
+                    List Material reorder and support to production
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl2" id="tbl2">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Remarks</th>
+                                <th>Order confirmation <br />Date</th>
+                                <th>Factory receive <br />Date</th>
+                                <th>Fixed <br />Date_Diff</th>
+                                <th>Date_Diff</th>
+                                <th>Effective<br /> Month</th>
+                                <th>Effective<br />Year</th>
+                                <th>Final<br />Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Cm_MaterialReorderAndSupportModels.Any())
+                            {
+                                foreach (var item in Model.Cm_MaterialReorderAndSupportModels)
+                                {
+                                    <tr class="tableTrCls2">
+                                        <td></td>
+                                        <td>@item.Remarks</td>
+                                        <td>
+                                            @if (@item.OrderConfirmationDate != null)
+                                            {
+                                                @String.Format("{0:yyyy-MM-dd}", @item.OrderConfirmationDate)
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (@item.FactoryReceiveDate != null)
+                                            {
+                                                @String.Format("{0:yyyy-MM-dd}", @item.FactoryReceiveDate)
+                                            }
+                                        </td>
+                                        <td>@item.FixedDateDiff</td>
+                                        <td>@item.DateDifference</td>
+                                        <td>@item.MonthNames</td>
+                                        <td>@item.Years</td>
+                                        <td>@item.FinalAmount</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="portlet box">
+            <div class="portlet-title">
+                <div class="caption" style="color: brown; font-weight: bold; text-decoration: underline">
+                    List Report Analysis
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl3" id="tbl3">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Category</th>
+                                <th>Unit</th>
+                                <th>Start Date</th>
+                                <th>Document <br />Submit Date</th>
+                                <th>Timeline</th>
+                                <th>Date_Diff</th>
+                                <th>Remarks</th>
+                                <th>Amount</th>
+                                <th>Final<br /> Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Cm_ReportAnalysisModels.Any())
+                            {
+                                foreach (var item in Model.Cm_ReportAnalysisModels)
+                                {
+                                    <tr class="tableTrCls2">
+                                        <td></td>
+                                        <td>@item.Category</td>
+                                        <td>@item.Unit</td>
+                                        <td>
+                                            @if (@item.StartDate != null)
+                                            {
+                                                @String.Format("{0:yyyy-MM-dd}", @item.StartDate)
+
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (@item.DocumentSubmitDate != null)
+                                            {
+                                                @String.Format("{0:yyyy-MM-dd}", @item.DocumentSubmitDate)
+                                            }
+                                        </td>
+                                        <td>@item.Timeline</td>
+                                        <td>@item.DateDifference</td>
+                                        <td>@item.Remarks</td>
+                                        <td>@item.Amount</td>
+                                        <td>@item.FinalAmount</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="portlet box">
+            <div class="portlet-title">
+                <div class="caption" style="color: brown; font-weight: bold; text-decoration: underline">
+                    List Negotiations And Development
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl4" id="tbl4">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Category</th>
+                                <th>Unit</th>
+                                <th>Effective <br />Month</th>
+                                <th>Effective <br />Year</th>
+                                <th>Remarks</th>
+                                <th>Saving Amount</th>
+                                <th>Amount</th>
+                                <th>Final<br /> Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Cm_NegotiationsAndDevelopmentModels.Any())
+                            {
+                                foreach (var item in Model.Cm_NegotiationsAndDevelopmentModels)
+                                {
+                                    <tr class="tableTrCls2">
+                                        <td></td>
+                                        <td>@item.Category</td>
+                                        <td>@item.Unit</td>
+                                        <td>@item.MonthNames</td>
+                                        <td>@item.Years</td>
+                                        <td>@item.Remarks</td>
+                                        <td>@item.SavingAmount</td>
+                                        <td>@item.Amount</td>
+                                        <td>@item.FinalAmount</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="portlet box">
+            <div class="portlet-title">
+                <div class="caption" style="color: brown; font-weight: bold; text-decoration: underline">
+                    List Penalties
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-striped table-bordered table-hover tbl5" id="tbl5">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Category</th>
+                                <th>Unit</th>
+                                <th>Effective <br />Month</th>
+                                <th>Effective <br />Year</th>
+                                <th>Assumption <br />Amount/<br />Percentage</th>
+                                <th>Real <br />Amount/<br />Percentage</th>
+                                <th>Diff.</th>
+                                <th>Remarks</th>
+                                <th>Amount</th>
+                                <th>Final<br /> Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Cm_PenaltiesModels.Any())
+                            {
+                                foreach (var item in Model.Cm_PenaltiesModels)
+                                {
+                                    <tr class="tableTrCls2">
+                                        <td></td>
+                                        <td>@item.Category</td>
+                                        <td>@item.Unit</td>
+                                        <td>@item.MonthNames</td>
+                                        <td>@item.Years</td>
+                                        <td>@item.AssumptionAmount</td>
+                                        <td>@item.RealAmount</td>
+                                        <td>@item.Diff</td>
+                                        <td>@item.Remarks</td>
+                                        <td>@item.Amount</td>
+                                        <td>@item.FinalAmount</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        @if (ViewContext.HttpContext.User.IsInRole("CMHEAD"))
+        {
+            <div class="caption" style="color: brown; font-weight: bold; text-decoration: underline">
+                Team Total Incentive(It will visible, when incentive will be generated by Team Lead)
+            </div>
+            <br />
+            <div class="table-scrollable table-responsive">
+                <table class="table table-bordered table-striped table-condensed flip-content" id="tbl" style="left: 0px;border: 1px solid black;color:black">
+                    <thead class="flip-content">
+                        <tr style="font-size: 16px; border: 2px solid black">
+                            @*<th style="text-align: center; display: none; visibility: hidden" class="noExl"> </th>*@
+
+                            <th style="text-align: left; border-width: 2px; width: 200px; height: 50px; border: 1px solid black; "> NAME </th>
+                            <th style="text-align: center; width: 60px; height: 50px; border: 1px solid black"> ID </th>
+                            <th style="text-align: center; width: 80px; height: 50px; border: 1px solid black"> TOTAL<br /> INCENTIVE </th>
+                            <th style="text-align: center; width: 60px; height: 50px; border: 1px solid black"> SHARE </th>
+                            <th style="text-align: left; width: 100px; height: 50px; border: 1px solid black"> Remarks </th>
+                            <th style="text-align: center; width: 80px; height: 50px; border: 1px solid black"> Special<br />Amount </th>
+                            <th style="text-align: center; width: 80px; height: 50px; border: 1px solid black"> Special<br />Remarks </th>
+                            <th style="text-align: center; width: 100px; height: 50px; border: 1px solid black"> NET_AMOUNT </th>
+                        </tr>
+                    </thead>
+                    <tbody style="text-align: center;font-size: 14px;">
+
+                        @foreach (var item1 in ViewBag.GetReports)
+                        {
+                            <tr class="tableTrCls1" id="trIdForIncentive">
+
+                                <td style="text-align: left; border: 1px solid black;">@item1.UserFullName</td>
+                                <td style="text-align: center; border: 1px solid black;">@item1.UserId</td>
+                                <td style="text-align: center; border: 1px solid black;">@item1.TotalAmount</td>
+                                <td style="text-align: center; border: 1px solid black;">@item1.Percentage</td>
+                                <td style="text-align: left; border: 1px solid black;">@item1.Remarks</td>
+                                <td style="text-align: center; border: 1px solid black;">@item1.SpecialAmount</td>
+                                <td style="text-align: center; border: 1px solid black;">@item1.SpecialRemarks</td>
+                                <td style="text-align: center; border: 1px solid black;" id="TotalIncentive">@item1.TotalIncentive</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td style="text-align: left; border: 1px solid black;font-weight: bold;text-align: right" colspan="3">Total Share:</td>
+                            <td id="ttShare" style="text-align: left; border: 1px solid black;font-weight: bold;text-align: center" colspan="1"></td>
+                            <td style="text-align: left; border: 1px solid black;font-weight: bold;text-align: right" colspan="3">Incentive:</td>
+                            <td id="ttAm" style="text-align: center;font-weight: bold"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+        <br />
+        <br />
+        <br />
+    </div>
+</div>
+<script type="text/javascript">
+    function ExportToExcel() {
+        var htmltable = document.getElementById('table2excel');
+        var html = htmltable.outerHTML;
+        window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
+    }
+</script>
+<script>
+    $(function () {
+        $("body:first").addClass("page-sidebar-closed");
+        $("ul.page-sidebar-menu").addClass("page-sidebar-menu-closed");
+    });
+    var AllFinalAmount = 0;
+    var AllPenalties = 0;
+
+    var AllFinalAmount1 = 0;
+    var AllShareAmount1 = 0;
+    $(function () {
+        //tableTrCls1
+        $("#tbl tr.tableTrCls1").each(function () {
+            var final_Am_Id1 = $.trim($(this).find('td:eq(7)').text());
+            var final_Am_Id2 = $.trim($(this).find('td:eq(3)').text());
+            console.log("incentive :" + final_Am_Id1);
+            AllFinalAmount1 += +final_Am_Id1;
+            AllShareAmount1 += +final_Am_Id2;
+        });
+        $('#ttAm').text(AllFinalAmount1);
+        $('#ttShare').text(AllShareAmount1);
+
+
+        //
+        $("#tbl7 tr.tableTrCls2").each(function () {
+            var final_Am_Id1 = $.trim($(this).find('td:eq(5)').text());
+            console.log("incentive :" + final_Am_Id1);
+            AllFinalAmount += +final_Am_Id1;
+        });
+        $("#tbl6 tr.tableTrCls2").each(function () {
+            var final_Am_Id1 = $.trim($(this).find('td:eq(19)').text());
+            console.log("incentive :" + final_Am_Id1);
+            AllFinalAmount += +final_Am_Id1;
+        });
+        $("#tbl1 tr.tableTrCls2").each(function () {
+            var final_Am_Id1 = $.trim($(this).find('td:eq(6)').text());
+            console.log("incentive :" + final_Am_Id1);
+            AllFinalAmount += +final_Am_Id1;
+        });
+        $("#tbl2 tr.tableTrCls2").each(function () {
+            var final_Am_Id1 = $.trim($(this).find('td:eq(8)').text());
+            console.log("incentive :" + final_Am_Id1);
+            AllFinalAmount += +final_Am_Id1;
+        });
+        $("#tbl3 tr.tableTrCls2").each(function () {
+            var final_Am_Id1 = $.trim($(this).find('td:eq(9)').text());
+            console.log("incentive :" + final_Am_Id1);
+            AllFinalAmount += +final_Am_Id1;
+        });
+        $("#tbl4 tr.tableTrCls2").each(function () {
+            var final_Am_Id1 = $.trim($(this).find('td:eq(8)').text());
+            console.log("incentive :" + final_Am_Id1);
+            AllFinalAmount += +final_Am_Id1;
+        });
+        $("#tbl5 tr.tableTrCls2").each(function () {
+            var final_Am_Id1 = $.trim($(this).find('td:eq(10)').text());
+            console.log("incentive :" + final_Am_Id1);
+            AllFinalAmount += +final_Am_Id1;
+        });
+        console.log("AllFinalAmount :" + AllFinalAmount);
+
+        $('#btnforname').on('click', function (e) {
+            e.preventDefault();
+            var selectedMonthText = document.getElementById('DDDMonth');
+            var selectedYearTest = document.getElementById('DDDYear');
+
+            var selecteddropTextMon = selectedMonthText.options[selectedMonthText.selectedIndex].value;
+            var selecteddropTextYear = selectedYearTest.options[selectedYearTest.selectedIndex].text;
+
+            if (selecteddropTextMon == "0") {
+
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please must select Month",
+                }).show();
+                return false;
+            }
+            if (selecteddropTextYear == "SELECT YEAR") {
+
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please must select Year",
+                }).show();
+                return false;
+            }
+            //   window.open('@Url.Action("CommercialIncentiveDescription", "Commercial")' + '?months=' + selecteddropTextMon +'&years=' + selecteddropTextYear);
+            window.location = '@Url.Action("CommercialIncentiveDescription", "Commercial")' + '?months=' + selecteddropTextMon +
+                '&years=' + selecteddropTextYear;
+        });
+
+        //
+
+        var t7 = $('#tbl7').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false,
+            //fixedHeader: true
+        });
+        t7.on('order.dt search.dt', function () {
+            t7.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+        //
+
+        var t1 = $('#tbl1').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false
+        });
+        t1.on('order.dt search.dt', function () {
+            t1.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+        var t2 = $('#tbl2').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false
+        });
+        t2.on('order.dt search.dt', function () {
+            t2.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+        //
+        var t3 = $('#tbl3').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false
+        });
+        t3.on('order.dt search.dt', function () {
+            t3.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+        //
+        var t4 = $('#tbl4').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false
+        });
+        t4.on('order.dt search.dt', function () {
+            t4.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+        //
+        var t5 = $('#tbl5').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false
+        });
+        t5.on('order.dt search.dt', function () {
+            t5.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+        //
+        var t6 = $('#tbl6').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false
+        });
+        t6.on('order.dt search.dt', function () {
+            t6.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+        //
+
+
+    });
+    //
+    
+</script>

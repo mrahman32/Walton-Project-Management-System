@@ -1,0 +1,98 @@
+﻿@model ProjectManagement.Models.LcApprovalManagerModel
+@{
+    ViewBag.Title = "LcApprovalManager";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("LcApprovalManager", "Common", FormMethod.Post, new { enctype = "multipart/form-data", id = "formLcApprovalManager" }))
+{
+    @Html.HiddenFor(m=>m.Dependency)
+    @Html.HiddenFor(m=>m.RoleDescription)
+    <div class="portlet box blue">
+        <div class="portlet-title">
+            <div class="caption">LC Approval Manager</div>
+        </div>
+        <div class="portlet-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-md-2">Role</div>
+                    <div class="col-md-10">
+                        @Html.DropDownList("roleDesc", new SelectList(ViewBag.RoleDesc, "", ""), "Select", new { @class = "form-control ddChosen" })
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="col-md-2">Dependencies</div>
+                    <div class="col-md-10">
+                        <select name="" id="ddlRoleDescDep" class="form-control" multiple>
+                            <option value="Select">Select</option>
+                            @if (ViewBag.RoleDesc != null)
+                            {
+                                foreach (var i in ViewBag.RoleDesc)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+
+                    </div>
+                </div>
+
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-md-2">Starting Value</div>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.StartingValue, new { @class = "form-control", type = "number", min = "0" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-md-2">Ending Value</div>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.EndingVal, new { @class = "form-control", type = "number", min = "0" })
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="submit" class="btn btn-success" value="Save"/>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+    $('select').chosen({
+        disable_search_threshold: 10,
+        no_results_text: "Oops, nothing found!",
+        width: "100%"
+    });
+    
+    //Role change event
+    $('#roleDesc').on('change', function() {
+        var roleDesc = $('#roleDesc').val();
+        $('#RoleDescription').val(roleDesc);
+    });
+
+    //ddlRoleDescDep change event
+    $('#ddlRoleDescDep').on('change', function () {
+        var roleDescDep = $('#ddlRoleDescDep').val();
+        var strRoleDescDep = '';
+        console.log(roleDescDep);
+        if (roleDescDep != null) {
+            for (var i = 0; i < roleDescDep.length; i++) {
+                if (i == roleDescDep.length - 1) {
+                    strRoleDescDep = strRoleDescDep + roleDescDep[i];
+                } else {
+                    strRoleDescDep = strRoleDescDep + roleDescDep[i] + ',';
+                }
+            }
+            console.log(strRoleDescDep);
+            $('#Dependency').val(strRoleDescDep);
+        }
+    });
+</script>

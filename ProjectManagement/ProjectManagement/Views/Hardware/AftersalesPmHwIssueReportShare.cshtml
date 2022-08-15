@@ -1,0 +1,313 @@
+﻿@using System.Web.Mvc.Html
+@using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical
+@using ProjectManagement.Infrastructures.Helper
+@using ProjectManagement.Models
+@model ProjectManagement.ViewModels.Hardware.VmAftersalesPmHwIssueVerification
+
+@*<h2>AftersalesPmHwIssueReportShare</h2>*@
+
+<link href="~/Content/loadingText.css" rel="stylesheet" />
+<style>
+    .DTFC_LeftBodyWrapper {
+        position: relative;
+        top: -11px !important;
+        left: 0px;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .DTFC_LeftBodyLiner {
+        position: relative;
+        top: 0px;
+        left: 0px;
+        overflow: hidden;
+        height: 200px;
+        max-height: 200px;
+    }
+
+    .page-header-fixed .page-container {
+        margin-top: 0px;
+    }
+
+    .navbar-fixed-top {
+        position: relative;
+    }
+
+    input[type=checkbox] {
+        /* Double-sized Checkboxes */
+        -ms-transform: scale(2); /* IE */
+        -moz-transform: scale(2); /* FF */
+        -webkit-transform: scale(2); /* Safari and Chrome */
+        -o-transform: scale(2); /* Opera */
+        padding: 10px;
+    }
+
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 70px;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 999;
+        text-align: center;
+    }
+</style>
+
+<div class="portlet light bordered" style="background: gray">
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- BEGIN VALIDATION STATES-->
+            <div class="portlet light portlet-fit portlet-form bordered">
+                <div class="portlet-body" style="padding: 15px">
+                    <h6 id="proName" style="font-weight: bold;font-size:30px;color:olive;text-align: center;text-decoration: underline"></h6>
+                    <br /><br /><br /><br />
+                    <div class="row" style="border:2px solid olive;padding: 15px">
+                        <p style="font-weight: bold;color:chocolate">
+                            Previous Shared Report Details:
+                        </p>
+                        <br /><br />
+                        <div class="table-scrollable table-responsive">
+                            <table class="table table-striped table-bordered table-hover tbl2" id="tbl2">
+                                <thead style="background-color:lightsteelblue; color: black;">
+                                    <tr>
+                                        <th>#</th>
+                                        <th style="display: none">Id</th>
+                                        <th style="display: none">MainId</th>
+                                        <th class="text-center"> Details<br /> of Report</th>
+                                        <th class="text-center">Instruction<br /> for<br /> Service</th>
+                                        <th class="text-center">Instruction<br /> for<br /> Production</th>
+                                        <th class="text-center">Future Plan<br /> for Next <br />Products</th>
+                                        <th class="text-center">Forward<br/> Reason</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Added Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.AftersalesPm_HwIssueReportShareModels.Any())
+                                    {
+                                        for (int i = 0; i < Model.AftersalesPm_HwIssueReportShareModels.Count; i++)
+                                        {
+                                            <tr class="trClsforSize">
+                                                <td></td>
+                                                <td class="text-center" style="display: none">@Model.AftersalesPm_HwIssueReportShareModels[i].Id</td>
+                                                <td class="text-center" style="display: none">@Model.AftersalesPm_HwIssueReportShareModels[i].MainId</td>
+                                                <td class="text-center" style="">@Model.AftersalesPm_HwIssueReportShareModels[i].ReportDetails</td>
+                                                <td class="text-center" style="">@Model.AftersalesPm_HwIssueReportShareModels[i].InstructionService</td>
+                                                <td class="text-center" style="">@Model.AftersalesPm_HwIssueReportShareModels[i].InstructionProduction</td>
+                                                <td class="text-center" style="">@Model.AftersalesPm_HwIssueReportShareModels[i].FuturePlanForNxtPro</td>
+                                                <td class="text-center" style="">@Model.AftersalesPm_HwIssueReportShareModels[i].ForwardReason</td>
+                                                <td class="text-center" style="">
+                                                    @if (@Model.AftersalesPm_HwIssueReportShareModels[i].Status == "ReportShared")
+                                                    {
+                                                        <p style="color:yellowgreen;font-weight: bold">@Model.AftersalesPm_HwIssueReportShareModels[i].Status</p>
+                                                    }
+                                                    else if (@Model.AftersalesPm_HwIssueReportShareModels[i].Status == "ReportForwarded")
+                                                    {
+                                                        <p style="color: blue; font-weight: bold">@Model.AftersalesPm_HwIssueReportShareModels[i].Status</p>
+                                                    }
+                                                    else if (@Model.AftersalesPm_HwIssueReportShareModels[i].Status == "ReportAccepted")
+                                                    {
+                                                        <p style="color: green; font-weight: bold">@Model.AftersalesPm_HwIssueReportShareModels[i].Status</p>
+                                                    }
+                                                </td>
+                                                <td class="text-center" style="">
+                                                    @String.Format("{0:yyyy-MM-dd}", @Model.AftersalesPm_HwIssueReportShareModels[i].AddedDate)
+                                                </td>
+
+                                            </tr>
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <br /><br />
+                    </div>
+                    <br /><br />
+                    <div class="row" style="border:2px solid olive;padding: 15px">
+                        <p style="font-weight: bold;color:green">
+                            Market Issue Report:
+                        </p>
+                        <div>
+                            <table class="table table-striped table-bordered table-hover tbl3" id="tbl3">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center"> Details<br /> of Report</th>
+                                        <th class="text-center">Instruction<br /> for<br /> Service</th>
+                                        <th class="text-center">Instruction<br /> for<br /> Production</th>
+                                        <th class="text-center">Future Plan<br /> for Next <br />Products</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="col-lg-12">
+                                        <td class="col-lg-3">
+                                            <textarea class="col-lg-12" id="ReportDetails" rows="10"></textarea>
+                                        </td>
+                                        <td class="col-lg-3">
+                                            <textarea class="col-lg-12" id="InstructionService" rows="10"></textarea>
+                                        </td>
+                                        <td class="col-lg-3">
+                                            <textarea class="col-lg-12" id="InstructionProduction" rows="10"></textarea>
+                                        </td>
+                                        <td class="col-lg-3">
+                                            <textarea class="col-lg-12" id="FuturePlanForNxtPro" rows="10"></textarea>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <br /><br />
+                        @if (@Model.AftersalesPm_HwIssuePlaceRequirementModel != null)
+                        {
+                            if (@Model.AftersalesPm_HwIssuePlaceRequirementModel.ReqStatus == "RequirementPlaced" || @Model.AftersalesPm_HwIssuePlaceRequirementModel.ReqStatus == "RequirementAccepted"
+                                || @Model.AftersalesPm_HwIssuePlaceRequirementModel.ReqStatus == "ReportShared" || @Model.AftersalesPm_HwIssuePlaceRequirementModel.ReqStatus == "ReportAccepted")
+                            {
+                                <p style="font-weight: bold;color:red">Report Already Shared.</p>
+                            }
+                            //else if (@Model.AftersalesPm_HwIssuePlaceRequirementModel.ReqStatus == "ASSIGNED")
+                            //{
+
+                            //}
+                            else
+                            {
+                                <button type="submit" class="btn btnShare" id="btnShare" style="background: #FFFF00; font-weight: bold">
+                                    Save Report
+                                </button>
+                            }
+                        }
+
+                        <br /><br />
+                    </div>
+                </div>
+            </div>
+
+            <!-- END VALIDATION STATES-->
+        </div>
+    </div>
+</div>
+
+<div id="loading" style="display: none;text-align: center;">
+    <img src="~/img/loading-spinner-grey.gif" />
+</div>
+<script>
+    /////sample_1 /////
+    $(function () {
+        $("body:first").addClass("page-sidebar-closed");
+        $("ul.page-sidebar-menu").addClass("page-sidebar-menu-closed");
+
+        var proName = '@Request.Params["proName"]';
+        $("#proName").text(proName);
+
+        $('.btnShare').on('click', function (e) {
+            $('#loading').show();
+          
+            var idss = '@Request.Params["ids"]';
+            var proName1 = '@Request.Params["proName"]';
+
+            var ReportDetails = document.getElementById("ReportDetails").value;
+            var InstructionService = document.getElementById("InstructionService").value;
+            var InstructionProduction = document.getElementById("InstructionProduction").value;
+            var FuturePlanForNxtPro = document.getElementById("FuturePlanForNxtPro").value;
+
+
+            if (ReportDetails == "") {
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please must input details of Report.",
+                }).show();
+                $('#loading').hide();
+                return false;
+            }
+            if (InstructionService == "") {
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please must input Instruction for Service.",
+                }).show();
+                $('#loading').hide();
+                return false;
+            }
+            if (InstructionProduction == "") {
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please must input Instruction for Production.",
+                }).show();
+                $('#loading').hide();
+                return false;
+            }
+            if (FuturePlanForNxtPro == "") {
+                alertify.dialog('alert').set({
+                    'title': '   ',
+                    'transition': 'zoom',
+                    'message': "Please must input Future Plan For Next Products.",
+                }).show();
+                $('#loading').hide();
+                return false;
+            }
+
+            var obj = {};
+            obj.Id = idss;
+            obj.ProjectName = proName1;
+            obj.ReportDetails = ReportDetails;
+            obj.InstructionService = InstructionService;
+            obj.InstructionProduction = InstructionProduction;
+            obj.FuturePlanForNxtPro = FuturePlanForNxtPro;
+
+            $.ajax({
+                url: '@Url.Action("SaveAftersalesPmHwIssueReportShare", "Hardware")',
+                type: 'POST',
+                data: JSON.stringify(obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                async: false,
+                success: function (data) {
+                    if (data == "ok") {
+                        window.location = '@Url.Action("AftersalesPmHwIssueReportShare", "Hardware")' + '?ids=' + idss + '&proName=' + proName1;
+
+                        window.location.reload(true);
+                        $('#loading').hide();
+                    }
+                }
+            });
+            window.location = '@Url.Action("AftersalesPmHwIssueReportShare", "Hardware")' + '?ids=' + idss + '&proName=' + proName1;
+
+        });
+        var t = $('#tbl2').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            }],
+            "paging": false,
+            //"lengthMenu": [[10, 20, 30, 50, -1], [10, 20, 30, 50, "All"]],
+            "fixedHeader": {
+                header: true,
+                footer: true
+            }
+
+        });
+        t.on('order.dt search.dt', function () {
+            t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+    });
+    $(document).on('submit', 'form', function () {
+        var buttons = $(this).find('[type="submit"]');
+        if ($(this).valid()) {
+            buttons.each(function (btn) {
+                $(buttons[btn]).prop('disabled', true);
+            });
+        } else {
+            buttons.each(function (btn) {
+                $(buttons[btn]).prop('disabled', false);
+            });
+        }
+    });
+</script>

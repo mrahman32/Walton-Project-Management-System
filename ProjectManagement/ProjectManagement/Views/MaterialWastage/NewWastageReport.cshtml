@@ -1,0 +1,184 @@
+﻿@model ProjectManagement.Models.MaterialWasterReportCreateModel
+@{
+    ViewBag.Title = "NewWastageReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("NewWastageReport", "MaterialWastage", FormMethod.Post, new { enctype = "multipart/form-data", id = "wastForm" }))
+{
+    if (TempData["message"] != null)
+    {
+        var msgType = TempData["messageType"];
+        var msg = TempData["message"];
+        if ((int)msgType == 1)
+        {
+            TempData["message"] = null;
+            TempData["messageType"] = 0;
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+                <strong>Message:</strong> @msg
+            </div>
+
+        }
+        else if ((int)msgType == 2)
+        {
+            TempData["message"] = null;
+            TempData["messageType"] = 0;
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+                <strong>Message:</strong> @msg
+            </div>
+
+        }
+        else if ((int)msgType == 3)
+        {
+            TempData["message"] = null;
+            TempData["messageType"] = 0;
+            <div class="alert alert-info alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+                <strong>Message:</strong> @msg
+            </div>
+        }
+    }
+    
+    
+    <div class="portlet box blue">
+        <div class="portlet-title">
+            <div class="caption">Upload Material To Create Wastage Report</div>
+        </div>
+        <div class="portlet-body">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="col-md-4">ReportName<span style="color:red"> *</span></div>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(model => model.ReportName, null, new { @class = "form-control", type = "text" })
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="col-md-4">Month<span style="color:red"> *</span></div>
+                    <div class="col-md-8">
+                        @Html.HiddenFor(model => model.MonthName)
+                        @Html.DropDownListFor(model => model.MonthNumber, new List<SelectListItem>
+                    {
+                        new SelectListItem { Value = "1", Text = "January"},
+                        new SelectListItem { Value = "2", Text = "February"},
+                        new SelectListItem { Value = "3", Text = "March"},
+                        new SelectListItem { Value = "4", Text = "April"},
+                        new SelectListItem { Value = "5", Text = "May"},
+                        new SelectListItem { Value = "6", Text = "June"},
+                        new SelectListItem { Value = "7", Text = "July"},
+                        new SelectListItem { Value = "8", Text = "August"},
+                        new SelectListItem { Value = "9", Text = "September"},
+                        new SelectListItem { Value = "10", Text = "October"},
+                        new SelectListItem { Value = "11", Text = "November"},
+                        new SelectListItem { Value = "12", Text = "Decebmer"},
+                    }, "select", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.MonthNumber, String.Empty, new { @style = "color:red;!important" })
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="col-md-4">Year<span style="color:red"> *</span></div>
+                    <div class="col-md-8">
+                        @Html.DropDownListFor(model => model.YearNumber, new List<SelectListItem>
+                    {
+                        new SelectListItem { Text = "2021",Value = "2021"},
+                        new SelectListItem { Text = "2022",Value = "2022"},
+                        new SelectListItem { Text = "2023",Value = "2023"},
+                        new SelectListItem { Text = "2024",Value = "2024"},
+                        new SelectListItem { Text = "2025",Value = "2025"},
+                        new SelectListItem { Text = "2026",Value = "2026"},
+                        new SelectListItem { Text = "2027",Value = "2027"},
+                        new SelectListItem { Text = "2028",Value = "2028"},
+                        new SelectListItem { Text = "2029",Value = "2029"}
+                    }, "select", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.YearNumber, String.Empty, new { @style = "color:red;!important" })
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <button type="button" class="btn btn-warning btn-sm" id="btnAddFiles">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                            <span style="font-weight: bold">Add Files</span>
+                        </button>
+
+                        <br />
+                        <br />
+
+                        <table class="table table-bordered" id="tblMaterialFiles">
+                            <thead>
+                                <tr>
+                                    <th>Item Type</th>
+                                    <th>File</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.MaterialWastageFileUploads.Count > 0)
+                                {
+                                    foreach (var file in Model.MaterialWastageFileUploads)
+                                    {
+                                        Html.RenderPartial("~/Views/Shared/_MaterialWastagePartial.cshtml", file);
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+
+                        <br />
+                        <br />
+                        <button type="submit" class="btn btn-success btn-sm" id="btnSubmit">
+                            <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                            <span style="font-weight: bold">Submit</span>
+                        </button>
+                        <button id="btnDecoy" class="btn btn-warning hidden"><i class="fa fa-refresh fa-spin fa-lg"></i> PLEASE WAIT....</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<script type="text/javascript">
+
+    $(function () {
+        $("#btnAddFiles").on('click', function () {
+            $('.fa-plus').attr('hidden', true);
+            $.post('@Url.Action("AddWastageFile", "MaterialWastage")', {}, function (data) {
+                $('#tblMaterialFiles tbody').append(data);
+                $('.fa-plus').attr('hidden', false);
+                $('.spinner-border').attr('hidden', true);
+            });
+        });
+        $('#tblMaterialFiles tbody').on('click', '.btnRemoveFile', function () {
+            var row = $(this).closest('tr');
+            row.remove();
+        });
+
+        $('#tblMaterialFiles tbody').on('change', '.material_type_id', function () {
+            var text = $(this).find('option:selected').text();
+            $(this).closest('tr').find('.material_type_name').val(text);
+
+            var v = $(this).closest('tr').find('.material_type_name').val();
+            alert(text + '---' + v );
+
+        });
+
+        $("#wastForm").on("submit", function (event) {
+            //event.preventDefault();
+
+            // Show the "busy" Gif:
+            $('#btnSubmit').addClass('hidden');
+            $('#btnDecoy').removeClass('hidden');
+            
+        });
+    })
+
+</script>
+

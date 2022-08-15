@@ -1,0 +1,17 @@
+﻿@model ProjectManagement.Models.MaterialWastageFileUpload
+<tr>
+    @using (Html.BeginCollectionItem("MaterialWastageFileUploads"))
+    {
+        @Html.HiddenFor(model=>model.MaterialTypeName, new {@class="material_type_name"})
+        @*@Html.HiddenFor(model=>model.MaterialWastageItemTypes, new {@class="material_type_list"})*@
+        <td>
+            @Html.DropDownListFor(model => model.MaterialTypeId, new SelectList(@Model.MaterialWastageItemTypes, "Id", "ItemType"), new { @class = "form-control material_type_id" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.HttpPostedFileBase, new { @class = "form-control", type = "file", id = "txtFileUpload" })
+        </td>
+        <td>
+            <button class="btn btn-danger btnRemoveFile" type="button"><i class="fa fa-trash"></i></button>
+        </td>
+    }
+</tr>

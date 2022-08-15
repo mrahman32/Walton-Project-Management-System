@@ -1,0 +1,233 @@
+﻿@using ProjectManagement.Models
+@model ProjectManagement.ViewModels.Management.VmBidding
+
+<link href="~/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/layouts/layout4/css/layout.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/layouts/layout4/css/themes/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
+<link href="~/assets/layouts/layout4/css/custom.min.css" rel="stylesheet" type="text/css" />
+
+
+@*<h2>BiddingApprovalPendingList</h2>*@
+<style>
+    .page-header-fixed .page-container {
+        margin-top: 0px;
+    }
+
+    .navbar-fixed-top {
+        position: relative;
+    }
+
+    #loading {
+        width: 100%;
+        height: 100%;
+        top: 70px;
+        left: 0;
+        position: fixed;
+        display: block;
+        opacity: 0.7;
+        background-color: #fff;
+        z-index: 999;
+        text-align: center;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="col-lg-12">
+                    <div class="caption font-dark">
+                        <i class="icon-settings font-dark"></i>
+                        <span class="caption-subject bold uppercase">  Bidding Management Approval Pending List</span>
+                    </div>
+                    <div class="tools"> </div>
+                </div>
+                <br /><br />
+                <div class="col-lg-12">
+                    <div class="col-lg-9">
+                      
+                    </div>
+                    <div class="col-lg-3"></div>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="table-scrollable table-responsive">
+                    <table class="table table-bordered table-striped table-condensed flip-content tbl" id="tbl1">
+                        <thead style="background-color: #4a8099;color: white;">
+                            <tr>
+                                <th style="border:1px solid black">Bid <br />Ref.<br /> No:</th>
+                                <th style="border:1px solid black">Bidding Name</th>
+                                <th style="border:1px solid black">Category</th>
+                                <th style="border:1px solid black">Bid Creation <br /> Date</th>
+                                <th style="border:1px solid black">Bidding <br /> End Date</th>
+                                <th style="border:1px solid black">Status</th>
+                                <th style="border:1px solid black">Opening<br />Remarks</th>
+                                <th style="border:1px solid black">Bid<br />Created By</th>
+                                <th style="border:1px solid black">Bid<br />Approved By</th>
+                                <th style="border:1px solid black">Bid<br />Approved Date</th>
+                                <th style="border:1px solid black">Mm<br />Approved By</th>
+                                <th style="border:1px solid black">Mm<br />Approved Date</th>
+                                <th style="border:1px solid black">Mm<br />Decline Reason</th>
+                                <th style="border:1px solid black">Attachment</th>
+                                <th style="border:1px solid black">Details</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.CreateBidModels.Any())
+                            {
+                                for (int i = 0; i < Model.CreateBidModels.Count; i++)
+                                {
+                                    if (Model.CreateBidModels[i].Id > 0)
+                                    {
+                                        <tr>
+                                            <td style="border:2px solid pink;font-weight:bold">@Html.DisplayFor(x => x.CreateBidModels[i].Id)</td>
+                                            <td style="border:1px solid pink">@Html.DisplayFor(x => x.CreateBidModels[i].BidName)</td>
+                                            <td style="border:1px solid pink">@Html.DisplayFor(x => x.CreateBidModels[i].Category)</td>
+                                            <td style="border:1px solid pink">
+                                                @Html.DisplayFor(x => x.CreateBidModels[i].AddedDate, "{0:yyy-MM-dd}")
+                                            </td>
+                                            <td style="border:1px solid pink">
+                                                @Html.DisplayFor(x => x.CreateBidModels[i].BiddingEndDate, "{0:yyy-MM-dd}")
+                                            </td>
+                                            <td style="border:1px solid pink">
+                                                @if (@Model.CreateBidModels[i].Status == "NEW")
+                                                {
+                                                    <p style="color: blueviolet;font-weight: bold">  @Model.CreateBidModels[i].Status</p>
+                                                }
+                                                @if (@Model.CreateBidModels[i].Status == "ONGOING")
+                                                {
+                                                    <p style="color: blue;font-weight: bold">  @Model.CreateBidModels[i].Status</p>
+                                                }
+                                                @if (@Model.CreateBidModels[i].Status == "REOPENED")
+                                                {
+                                                    <p style="color:red;font-weight:bold"> @Model.CreateBidModels[i].Status</p>
+                                                }
+                                                @if (@Model.CreateBidModels[i].Status == "CLOSED" || @Model.CreateBidModels[i].Status == "ADMINAPPROVED" || @Model.CreateBidModels[i].Status == "MANAGEMENTAPPROVED")
+                                                {
+                                                    <p style="color:green;font-weight:bold">  @Model.CreateBidModels[i].Status</p>
+                                                }
+                                            </td>
+                                            <td style="border:1px solid pink">@Html.DisplayFor(x => x.CreateBidModels[i].OpeningRemarks)</td>
+                                            <td style="border:1px solid pink">@Html.DisplayFor(x => x.CreateBidModels[i].UserFullName)</td>
+                                            <td style="border:1px solid pink">@Html.DisplayFor(x => x.CreateBidModels[i].AdminApproveByName)</td>
+                                            <td style="border:1px solid pink">
+                                                @*@Html.DisplayFor(x => x.CreateBidModels[i].AdminApproveDate, "{0:yyy-MM-dd}")*@
+                                                @if (@Model.CreateBidModels[i].AdminApproveDate != null)
+                                                {@String.Format("{0:yyyy-MM-dd}", @Model.CreateBidModels[i].AdminApproveDate)}
+                                            </td>
+                                            <td style="border:1px solid pink">@Html.DisplayFor(x => x.CreateBidModels[i].ManagementApproveByName)</td>
+                                            <td style="border:1px solid pink">
+                                                @*@Html.DisplayFor(x => x.CreateBidModels[i].AdminApproveDate, "{0:yyy-MM-dd}")*@
+                                                @if (@Model.CreateBidModels[i].ManagementApproveDate != null)
+                                                {@String.Format("{0:yyyy-MM-dd}", @Model.CreateBidModels[i].ManagementApproveDate)}
+                                            </td>
+                                            <td style="border:1px solid pink">@Html.DisplayFor(x => x.CreateBidModels[i].ManagementDeclineRemarks)</td>
+                                            <td style="border:1px solid pink">
+                                                <div class="file-preview-thumbnails">
+                                                    <div class="">
+                                                        <div class="file-preview-frame file-preview-initial" id="preview-1475130072371-init_0" data-fileindex="init_0" data-template="image">
+                                                            <div class="col-lg-12">
+
+                                                                @Html.HiddenFor(model => model.CreateBidModels[i].HeadAttachment, new { @class = "clsRmv" })
+                                                                @if (Model.CreateBidModels[i].FilesDetails1 != null && Model.CreateBidModels[i].FilesDetails1.Any())
+                                                                {
+                                                                <table>
+                                                                    <tr>
+                                                                        <td>
+                                                                            @for (int m = 0; m < Model.CreateBidModels[i].FilesDetails1.Count; m++)
+                                                                                {
+                                                                                    if (Model.CreateBidModels[i].FilesDetails1[m].Extention == ".jpg" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".png" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".mp4" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".jpeg" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".txt" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".xls" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".wav")
+                                                                                    {
+                                                                                @*<td style="border:2px solid black;">*@
+                                                                                <div class="col-lg-4" style="width:300px;border:1px solid black;float:left;height:auto;">
+                                                                                    <embed class="" src="@Model.CreateBidModels[i].FilesDetails1[m].FilePath" style="width: 80px;height: 40px" />
+                                                                                    <br />
+                                                                                    <a target="_blank" style="width: 80px;" href="@Model.CreateBidModels[i].FilesDetails1[m].FilePath"><p style="width: 80px">Download</p></a>
+                                                                                </div>
+                                                                                <div class="col-lg-4"></div>
+                                                                                @*</td>*@
+
+                                                                                    }
+                                                                                    if (Model.CreateBidModels[i].FilesDetails1[m].Extention == ".zip" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".pdf" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".docx" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".xlsx" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".rar" || Model.CreateBidModels[i].FilesDetails1[m].Extention == ".pptx")
+                                                                                    {
+                                                                                        var urls = Model.CreateBidModels[i].FilesDetails1[m].FilePath.Split('|').ToList();
+
+                                                                                        for (int k = 0; k < urls.Count; k++)
+                                                                                        {
+                                                                                            var last2 = urls[k].Split('-').Last();
+                                                                                            var lastNameForM2 = Model.CreateBidModels[i].FilesDetails1[m].FilePath;
+
+                                                                                            lastNameForM2 = Path.GetFileName(last2);
+                                                                                @*<td style="border:2px solid black;">*@
+                                                                                <div class="col-lg-4" style="width:300px;border:1px solid black;float:left;height:auto;">
+                                                                                    @Html.TextAreaFor(model => lastNameForM2, new { style = "width:80px;height:40px;", disabled = "disabled" })
+                                                                                    <br />
+                                                                                    <a href="@Model.CreateBidModels[i].FilesDetails1[m].FilePath" style="width: 80px;" target="_blank"><p style="width: 80px">Download</p></a>
+                                                                                </div>
+                                                                                <div class="col-lg-4"></div>
+                                                                                @*</td>*@
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+
+                                                                }
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td style="border: 1px solid pink">
+                                                <a class="btn btn-success" style="color:white" target="_blank" href='@Url.Action("BiddingDetails", "Management", new { bidId = @Model.CreateBidModels[i].Id })'>
+                                                    <span class="glyphicon glyphicon-list-alt"></span> Details
+                                                </a>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+              
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script>
+    $(function () {
+        $("body:first").addClass("sidebar-collapse");
+        $("ul.page-sidebar-menu").addClass("page-sidebar-menu-closed");
+    });
+    $(document).ready(function () {
+
+        var t = $('#tbl1').DataTable({
+            "columnDefs": [{
+                "searchable": false,
+                "orderable": true,
+                "targets": 0
+            }],
+            "lengthMenu": [[10, 20, 30, 50, -1], [10, 20, 30, 50, "All"]],
+            "order": [[0, 'desc']],
+            "fixedHeader": {
+                header: true,
+                footer: true
+            }
+
+        });
+   
+    });
+</script>
